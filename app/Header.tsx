@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { useCart } from './context/CartContext';
+import { useAvailability } from './context/AvailabilityContext';
 import { useSearch } from './components/searchBar';
 
 
@@ -29,6 +30,7 @@ function Header() {
 const router = useRouter();
 const { setSearchTerm } = useSearch();
 const { cartCount } = useCart();
+const { isManagingAvailability, toggleAvailabilityManagement } = useAvailability();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const hoverTimeout = useRef<number | null>(null);
   const open = Boolean(anchorEl);
@@ -65,6 +67,14 @@ const { cartCount } = useCart();
     setAnchorEl(null);
     router.push(`/${slug.toLowerCase()}`);
   };
+
+  const handleManageItemsClick = () => {
+    if (!isManagingAvailability && window.location.pathname !== '/') {
+      router.push('/');
+    }
+    toggleAvailabilityManagement();
+  };
+
   return (
     <nav style={{height:'60px',zIndex:'1',background: 'rgba(255, 255, 255, 0.15)', backdropFilter: 'blur(12px)'}} className='header'>
         <div>
@@ -93,6 +103,21 @@ const { cartCount } = useCart();
         onChange={(e) => setSearchTerm(e.target.value)}
       />
           </div>
+          <Button
+            type="button"
+            aria-pressed={isManagingAvailability}
+            onClick={handleManageItemsClick}
+            sx={{
+              borderRadius: 2,
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+              color: 'white',
+              backgroundColor: isManagingAvailability ? '#6b2d7b' : 'rgba(255,255,255,0.12)',
+              '&:hover': { backgroundColor: isManagingAvailability ? '#7d368f' : 'rgba(255,255,255,0.2)' },
+            }}
+          >
+            {isManagingAvailability ? 'Done' : 'Manage Items'}
+          </Button>
           <div>
             <h3 style={{color:'#FFD54F',letterSpacing:'3px',marginLeft:'20px'}}>ORDER BELOW SPECIAL ITEMS</h3>
             <h3 style={{gap:'10px',display:'flex',color:' whitesmoke',letterSpacing:'0px',marginLeft:'10px'}}>

@@ -2,7 +2,6 @@
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { div } from 'framer-motion/client';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -68,17 +67,17 @@ export default function CartPage() {
           <img src={item.img} style={{ height: 50, borderRadius: 8 }} />
           <div style={{ flex: 1, marginLeft: 12 }}>
             <h4>{item.title}</h4>
-            <p>{item.price}</p>
+            <p>₹{item.price} each</p>
             <p>Quantity: {item.quantity}</p>
           </div>
           <div>
-            <Button variant="outlined" style={{ minWidth: '10px',height: '25px', padding: '5px' }}>
-              <RemoveIcon fontSize='small' onClick={() => decreaseQty(item.slug)} />
+            <Button aria-label={`Decrease ${item.title} quantity`} variant="outlined" style={{ minWidth: '10px',height: '25px', padding: '5px' }} onClick={() => decreaseQty(item.slug)}>
+              <RemoveIcon fontSize='small' />
             </Button>
             
             <span style={{ margin: '0 8px' }}>{item.quantity}</span>
-            <Button variant="outlined" style={{ minWidth: '10px',height: '25px', padding: '5px' }}>
-              <AddIcon fontSize='small' onClick={() => increaseQty(item.slug)} />
+            <Button aria-label={`Increase ${item.title} quantity`} variant="outlined" style={{ minWidth: '10px',height: '25px', padding: '5px' }} onClick={() => increaseQty(item.slug)}>
+              <AddIcon fontSize='small' />
             </Button>
           </div>
           <DeleteIcon onClick={() => removeItem(item.slug)} style={{ cursor: 'pointer', marginLeft: 12 }} />
@@ -106,7 +105,7 @@ export default function CartPage() {
     <Typography variant="h6">Total</Typography>
     <Typography variant="h6">₹{subtotal + 20}</Typography>
   </Box>
-  <Button variant="contained" sx={{ bgcolor: "#795548", color: "#fff",marginLeft:'1200px',mt: 5 }}>
+  <Button onClick={() => router.push('/checkout')} variant="contained" sx={{ bgcolor: "#1565c0", color: "#fff", mt: 3 }}>
     PROCEED TO CHECKOUT
   </Button>
 </Box>

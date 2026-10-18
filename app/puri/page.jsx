@@ -2,10 +2,13 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
+import { useAvailability } from '../context/AvailabilityContext';
+import AvailabilityToggle from '../components/AvailabilityToggle';
 
 export default function Card() {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { isAvailable } = useAvailability();
    const container = {
   hidden: { opacity: 0 },
   show: {
@@ -46,8 +49,9 @@ const card = {
                         backdropFilter: 'blur(80px)',display:'flex',flexDirection:'column',alignItems:'center',
                       }}
                     >
-          <img src="https://cdn.cdnparenting.com/articles/2020/02/26144721/PURI-BHAJI-RECIPE.jpg" alt="dosa" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
+          <img src="/images/puri.svg" alt="Puri" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
           <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>PURI</h3>
+          <AvailabilityToggle slug="puri" title="Puri" />
           <p style={{fontWeight:'bold'}}>
               Puri is a traditional Indian deep‑fried bread made from unleavened wheat flour dough, rolled into small discs and fried until it puffs up.
           </p>
@@ -77,19 +81,24 @@ const card = {
             Back
         </button>
         <button 
-        onClick={() => addToCart({ slug: 'puri', title: 'Puri', price: '₹35' , img: 'https://cdn.cdnparenting.com/articles/2020/02/26144721/PURI-BHAJI-RECIPE.jpg'})}
+        disabled={!isAvailable('puri')}
+        onClick={() => {
+          if (isAvailable('puri')) {
+            addToCart({ slug: 'puri', title: 'Puri', price: 35, img: '/images/puri.svg' });
+          }
+        }}
         style={{
             position: "fixed",
             bottom: "10px",
-            backgroundColor: "yellow",
+            backgroundColor: isAvailable('puri') ? "yellow" : "#777",
             border: "none",
             padding: "4px 20px",
             borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
+            cursor: isAvailable('puri') ? "pointer" : "not-allowed",
+            color: isAvailable('puri') ? "black" : "white",
             fontWeight: "bold",
         }}>
-            Add To Cart
+            {isAvailable('puri') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>
     </motion.div>

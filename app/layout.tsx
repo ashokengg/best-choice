@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./Header";
 import { CartProvider } from "./context/CartContext";
+import { AvailabilityProvider } from "./context/AvailabilityContext";
 import { SearchProvider } from "./components/searchBar";
+import { OrderDemoProvider } from "./context/OrderDemoContext";
 import type { ReactNode } from "react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,18 +28,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body style={{
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "100vh",
+        minHeight: "100vh",
         width: "100%",
-        backgroundImage:"url('https://static.vecteezy.com/system/resources/previews/015/882/420/non_2x/modern-minimalist-dark-blue-premium-abstract-background-with-luxury-geometric-dark-shape-exclusive-wallpaper-design-for-website-poster-brochure-presentation-free-vector.jpg')"
+        backgroundImage: "url('/images/tiffin_background2.svg.png')",
+        backgroundAttachment: "fixed",
         }}
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CartProvider>
-         <SearchProvider>
-          <Header />
-          {children}
-        </SearchProvider>
-        </CartProvider>
+        <AvailabilityProvider>
+          <OrderDemoProvider>
+            <CartProvider>
+             <SearchProvider>
+              <Header />
+              {children}
+            </SearchProvider>
+            </CartProvider>
+          </OrderDemoProvider>
+        </AvailabilityProvider>
       </body>
     </html>
   );

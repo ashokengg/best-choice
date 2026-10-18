@@ -2,10 +2,13 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
+import { useAvailability } from '../context/AvailabilityContext';
+import AvailabilityToggle from '../components/AvailabilityToggle';
 
 export default function Card() {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { isAvailable } = useAvailability();
   const container = {
   hidden: { opacity: 0 },
   show: {
@@ -49,8 +52,9 @@ const card = {
                     alignItems:'center'
                   }}
                 >
-        <img src="https://img.freepik.com/premium-photo/crispy-green-chilli-pakora-mirchi-bajji-served-with-tomato-ketchup-moody-background-its-popular-tea-time-snack-from-india-especially-monsoon-selective-focus_466689-66550.jpg" alt="Bajji" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
+        <img src="/images/bajji.svg" alt="Bajji" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
         <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>BAJJI</h3>
+        <AvailabilityToggle slug="bajji" title="Bajji" />
        <p style={{fontWeight:'bold'}}>
         Bajji is a popular South Indian fritter made by dipping sliced vegetables in a spiced gram flour batter and deep-frying until golden and crispy.
       </p>
@@ -80,19 +84,24 @@ const card = {
             Back
         </button>
         <button 
-        onClick={() => addToCart({ slug: 'bajji', title: 'Bajji', price: '₹35' , img: 'https://img.freepik.com/premium-photo/crispy-green-chilli-pakora-mirchi-bajji-served-with-tomato-ketchup-moody-background-its-popular-tea-time-snack-from-india-especially-monsoon-selective-focus_466689-66550.jpg'})}
+        disabled={!isAvailable('bajji')}
+        onClick={() => {
+          if (isAvailable('bajji')) {
+            addToCart({ slug: 'bajji', title: 'Bajji', price: 35, img: '/images/bajji.svg'});
+          }
+        }}
         style={{
             position: "fixed",
             bottom: "10px",
-            backgroundColor: "yellow",
+            backgroundColor: isAvailable('bajji') ? "yellow" : "#777",
             border: "none",
             padding: "4px 20px",
             borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
+            cursor: isAvailable('bajji') ? "pointer" : "not-allowed",
+            color: isAvailable('bajji') ? "black" : "white",
             fontWeight: "bold",
         }}>
-            Add To Cart
+            {isAvailable('bajji') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>
       <div>

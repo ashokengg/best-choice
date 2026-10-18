@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420">
+  <defs>
+    <linearGradient id="background" x2="0" y2="1">
+      <stop stop-color="#f3d6a0"/>
+      <stop offset="1" stop-color="#a85d35"/>
+    </linearGradient>
+    <radialGradient id="bonda" cx=".35" cy=".25">
+      <stop stop-color="#ffdf77"/>
+      <stop offset=".72" stop-color="#df8a27"/>
+      <stop offset="1" stop-color="#a64c18"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="420" rx="28" fill="url(#background)"/>
+  <ellipse cx="320" cy="287" rx="238" ry="86" fill="#402016" opacity=".2"/>
+  <ellipse cx="320" cy="265" rx="238" ry="86" fill="#fff7e8"/>
+  <ellipse cx="320" cy="265" rx="205" ry="60" fill="#ddc5a0"/>
+  <g fill="url(#bonda)" stroke="#984314" stroke-width="7">
+    <circle cx="210" cy="234" r="59"/>
+    <circle cx="322" cy="213" r="64"/>
+    <circle cx="430" cy="241" r="57"/>
+    <circle cx="269" cy="294" r="47"/>
+    <circle cx="382" cy="294" r="45"/>
+  </g>
+  <g fill="none" stroke="#ffd979" stroke-width="7" stroke-linecap="round" opacity=".85">
+    <path d="M178 216q19-24 42-21m83 0q20-29 46-19m63 62q17-21 39-17"/>
+    <path d="M250 287q15-20 34-16m78 15q16-18 33-14"/>
+  </g>
+  <circle cx="510" cy="309" r="34" fill="#fff"/>
+  <circle cx="510" cy="309" r="24" fill="#679645"/>
+</svg>

@@ -122,21 +122,22 @@ const handleSubmit = async (e: React.FormEvent) => {
   );
 }
 
-const styles = {
-  container: { maxWidth: 400, margin: '150px auto', padding: 20, textAlign: 'center' },
+const styles: Record<string, React.CSSProperties> = {
+  container: { maxWidth: 400, margin: '150px auto', padding: 20 },
   title: {
-  padding: '10px 25px',
-  borderRadius: '20px',
-  background: 'rgba(255, 255, 255, 0.15)',
-  backdropFilter: 'blur(8px)',
-  color: '#fff',
-  fontWeight: 600,
-  marginBottom: '20px',
-  border: '1px solid rgba(255,255,255,0.3)'},
+    padding: '10px 25px',
+    borderRadius: '20px',
+    background: 'rgba(255, 255, 255, 0.15)',
+    backdropFilter: 'blur(8px)',
+    color: '#fff',
+    fontWeight: 600,
+    marginBottom: '20px',
+    border: '1px solid rgba(255,255,255,0.3)',
+  },
   form: { display: 'flex', flexDirection: 'column', gap: 12 },
-  input: { padding: '10px', borderRadius: 6, border: '1px solid #ccc',color:'white',background:'rgba(255,255,255,0.1)' },
-  button: { padding: '10px', backgroundColor: 'purple',cursor:'pointer', color: 'white', border: 'none', borderRadius: 6 },
-  secondaryButton: { padding: '5px 8px 5px 8px',cursor:'pointer', backgroundColor: 'orange', color: 'black', border: 'none', borderRadius: 6 },
+  input: { padding: '10px', borderRadius: 6, border: '1px solid #ccc', color: 'white', background: 'rgba(255,255,255,0.1)' },
+  button: { padding: '10px', backgroundColor: 'purple', cursor: 'pointer', color: 'white', border: 'none', borderRadius: 6 },
+  secondaryButton: { padding: '5px 8px 5px 8px', cursor: 'pointer', backgroundColor: 'orange', color: 'black', border: 'none', borderRadius: 6 },
   link: { marginTop: 8, fontSize: 14, color: 'blue', textDecoration: 'underline', cursor: 'pointer' },
-  forgot: { marginTop: 8, fontSize: 14, color: 'white', textDecoration: 'underline', cursor: 'pointer' }
+  forgot: { marginTop: 8, fontSize: 14, color: 'white', textDecoration: 'underline', cursor: 'pointer' },
 };

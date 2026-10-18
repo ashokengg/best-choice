@@ -2,10 +2,13 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
+import { useAvailability } from '../context/AvailabilityContext';
+import AvailabilityToggle from '../components/AvailabilityToggle';
 
 export default function Card() {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { isAvailable } = useAvailability();
   const container = {
   hidden: { opacity: 0 },
   show: {
@@ -46,8 +49,9 @@ const card = {
                         backdropFilter: 'blur(80px)',display:'flex',flexDirection:'column',alignItems:'center',
                       }}
                     >
-        <img src="https://img.freepik.com/premium-photo/south-indian-aloo-bonda_233263-650.jpg" alt="Bonda" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
+        <img src="/images/bonda.svg" alt="Bonda" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
         <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>BONDA</h3>
+        <AvailabilityToggle slug="bonda" title="Bonda" />
        <p style={{fontWeight:'bold'}}>
         Bonda is a deep-fried South Indian snack, usually round in shape, with a crisp golden exterior and a soft, flavorful filling inside.
       </p>
@@ -75,19 +79,24 @@ const card = {
             Back
         </button>
         <button 
-        onClick={() => addToCart({ slug: 'bonda', title: 'Bonda', price: '₹40' , img: 'https://www.awesomecuisine.com/wp-content/uploads/2015/08/mangalore-bonda.jpg'})}
+        disabled={!isAvailable('bonda')}
+        onClick={() => {
+          if (isAvailable('bonda')) {
+            addToCart({ slug: 'bonda', title: 'Bonda', price: 40, img: '/images/bonda.svg'});
+          }
+        }}
         style={{
             position: "fixed",
             bottom: "10px",
-            backgroundColor: "yellow",
+            backgroundColor: isAvailable('bonda') ? "yellow" : "#777",
             border: "none",
             padding: "4px 20px",
             borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
+            cursor: isAvailable('bonda') ? "pointer" : "not-allowed",
+            color: isAvailable('bonda') ? "black" : "white",
             fontWeight: "bold",
         }}>
-            Add To Cart
+            {isAvailable('bonda') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>
       </motion.div>

@@ -2,10 +2,13 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
+import { useAvailability } from '../context/AvailabilityContext';
+import AvailabilityToggle from '../components/AvailabilityToggle';
 
 export default function Card() {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { isAvailable } = useAvailability();
    const container = {
   hidden: { opacity: 0 },
   show: {
@@ -46,8 +49,9 @@ const card = {
                         backdropFilter: 'blur(80px)',display:'flex',flexDirection:'column',alignItems:'center',
                       }}
                     >
-          <img src="https://wallpaperaccess.com/full/6340449.jpg" alt="dosa" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
+          <img src="/images/dosa.svg" alt="Dosa" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
           <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>DOSA</h3>
+          <AvailabilityToggle slug="dosa" title="Dosa" />
           <p style={{fontWeight:'bold'}}>
               Dosa is a thin, crispy South Indian crepe made from a fermented batter of rice and black gram (urad dal), enjoyed hot with chutneys and sambar.
           </p>
@@ -76,19 +80,24 @@ const card = {
             Back
         </button>
         <button 
-        onClick={() => addToCart({ slug: 'dosa', title: 'Dosa', price: '₹60' , img: 'https://wallpaperaccess.com/full/6340449.jpg'})}
+        disabled={!isAvailable('dosa')}
+        onClick={() => {
+          if (isAvailable('dosa')) {
+            addToCart({ slug: 'dosa', title: 'Dosa', price: 60, img: '/images/dosa.svg' });
+          }
+        }}
         style={{
             position: "fixed",
             bottom: "10px",
-            backgroundColor: "yellow",
+            backgroundColor: isAvailable('dosa') ? "yellow" : "#777",
             border: "none",
             padding: "4px 20px",
             borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
+            cursor: isAvailable('dosa') ? "pointer" : "not-allowed",
+            color: isAvailable('dosa') ? "black" : "white",
             fontWeight: "bold",
         }}>
-            Add To Cart
+            {isAvailable('dosa') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>
     </motion.div>
