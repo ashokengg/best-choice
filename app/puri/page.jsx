@@ -84,7 +84,7 @@ const card = {
         disabled={!isAvailable('puri')}
         onClick={() => {
           if (isAvailable('puri')) {
-            addToCart({ slug: 'puri', title: 'Puri', price: 35, img: '/images/puri.svg' });
+            addToCart({ slug: 'puri', title: 'Puri', price: 60, img: '/images/puri.svg' });
           }
         }}
         style={{

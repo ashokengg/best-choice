@@ -1,97 +1,85 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-
-const STORAGE_KEY = 'best-choice-item-availability';
-const DEFAULT_AVAILABILITY: Record<string, boolean> = {
-  dosa: false,
-  bonda: true,
-  bajji: true,
-  'medu-vada': true,
-  'masala-vada': true,
-  puri: false,
-  idli: false,
-  upma: false,
-  pesarattu: false,
-  samosa: false,
-  pakora: false,
-  'bhel-puri': false,
-  'sev-puri': false,
-  'pav-bhaji': false,
-  jalebi: false,
-};
+import { DEFAULT_AVAILABILITY } from '../config/availability';
 
 type AvailabilityContextType = {
   isAvailable: (slug: string) => boolean;
-  toggleAvailability: (slug: string) => void;
+  toggleAvailability: (slug: string) => Promise<void>;
   isManagingAvailability: boolean;
-  toggleAvailabilityManagement: () => void;
+  toggleAvailabilityManagement: () => Promise<void>;
+  availabilityError: string;
 };
 
 const AvailabilityContext = createContext<AvailabilityContextType | undefined>(undefined);
 
-function parseAvailability(value: string | null): Record<string, boolean> {
-  if (!value) return DEFAULT_AVAILABILITY;
-
-  try {
-    const parsed: unknown = JSON.parse(value);
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-      return DEFAULT_AVAILABILITY;
-    }
-
-    const stored = parsed as Record<string, unknown>;
-    return Object.fromEntries(
-      Object.entries(DEFAULT_AVAILABILITY).map(([slug, defaultValue]) => [
-        slug,
-        typeof stored[slug] === 'boolean' ? stored[slug] : defaultValue,
-      ])
-    );
-  } catch (error) {
-    console.error('Could not read saved item availability.', error);
-    return DEFAULT_AVAILABILITY;
-  }
-}
-
 export function AvailabilityProvider({ children }: { children: React.ReactNode }) {
   const [availability, setAvailability] = useState(DEFAULT_AVAILABILITY);
   const [isManagingAvailability, setIsManagingAvailability] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState('');
 
   useEffect(() => {
-    try {
-      setAvailability(parseAvailability(window.localStorage.getItem(STORAGE_KEY)));
-    } catch (error) {
-      console.error('Could not load saved item availability.', error);
-    }
-
-    const syncAvailability = (event: StorageEvent) => {
-      if (event.key === STORAGE_KEY) {
-        setAvailability(parseAvailability(event.newValue));
-      }
-    };
-
-    window.addEventListener('storage', syncAvailability);
-    return () => window.removeEventListener('storage', syncAvailability);
+    let active = true;
+    fetch('/api/availability')
+      .then(async (response) => {
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Could not load item availability.');
+        if (active) setAvailability({ ...DEFAULT_AVAILABILITY, ...result.availability });
+      })
+      .catch((error: unknown) => {
+        console.error('Could not load item availability from the server.', error);
+        if (active) setAvailabilityError('Could not load item availability from the database.');
+      });
+    return () => { active = false; };
   }, []);
 
-  const toggleAvailability = useCallback((slug: string) => {
+  const toggleAvailability = useCallback(async (slug: string) => {
     if (!(slug in DEFAULT_AVAILABILITY)) return;
-
-    const next = { ...availability, [slug]: !availability[slug] };
-    setAvailability(next);
+    setAvailabilityError('');
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      const response = await fetch('/api/availability', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, isAvailable: !availability[slug] }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not update availability.');
+      setAvailability({ ...DEFAULT_AVAILABILITY, ...result.availability });
     } catch (error) {
-      console.error('Could not save item availability.', error);
+      console.error('Could not update item availability.', error);
+      setAvailabilityError(error instanceof Error ? error.message : 'Could not update item availability.');
     }
   }, [availability]);
 
+  const toggleAvailabilityManagement = useCallback(async () => {
+    setAvailabilityError('');
+    if (isManagingAvailability) {
+      setIsManagingAvailability(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/me');
+      const result = await response.json();
+      if (response.status === 401) {
+        setAvailabilityError('Log in with a shopkeeper account to manage items.');
+        return;
+      }
+      if (response.status === 403 || (response.ok && result.user?.role !== 'shopkeeper')) {
+        setAvailabilityError('Shopkeeper access is required to manage items.');
+        return;
+      }
+      if (!response.ok) throw new Error(result.error || 'Could not verify shopkeeper access.');
+      setIsManagingAvailability(true);
+    } catch (error) {
+      setAvailabilityError(error instanceof Error ? error.message : 'Could not verify shopkeeper access.');
+    }
+  }, [isManagingAvailability]);
+
   const isAvailable = useCallback(
     (slug: string) => availability[slug] ?? false,
-    [availability]
+    [availability],
   );
-  const toggleAvailabilityManagement = useCallback(() => {
-    setIsManagingAvailability((current) => !current);
-  }, []);
 
   return (
     <AvailabilityContext.Provider
@@ -100,6 +88,7 @@ export function AvailabilityProvider({ children }: { children: React.ReactNode }
         toggleAvailability,
         isManagingAvailability,
         toggleAvailabilityManagement,
+        availabilityError,
       }}
     >
       {children}

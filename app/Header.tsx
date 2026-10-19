@@ -1,16 +1,14 @@
 'use client';
 import Link from 'next/link'
+import Image from 'next/image';
 import "./globals.css";
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
-import Badge, { badgeClasses } from '@mui/material/Badge';
+import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
-import { useState,useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { useCart } from './context/CartContext';
 import { useAvailability } from './context/AvailabilityContext';
@@ -28,12 +26,59 @@ const areas = [
 ];
 function Header() { 
 const router = useRouter();
+const pathname = usePathname();
 const { setSearchTerm } = useSearch();
 const { cartCount } = useCart();
-const { isManagingAvailability, toggleAvailabilityManagement } = useAvailability();
+const { isManagingAvailability, toggleAvailabilityManagement, availabilityError } = useAvailability();
+const [isSignedIn, setIsSignedIn] = useState(false);
+const [userName, setUserName] = useState('');
+const [authError, setAuthError] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const hoverTimeout = useRef<number | null>(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/auth/me')
+      .then(async (response) => {
+        if (response.status === 401) {
+            if (active) {
+              setIsSignedIn(false);
+              setUserName('');
+            }
+            return;
+          }
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || 'Could not check your account.');
+          if (active) {
+            setIsSignedIn(true);
+            setUserName(typeof result.user?.name === 'string' ? result.user.name : '');
+          }
+      })
+      .catch((error: unknown) => {
+        console.error('Could not check signed-in status.', error);
+        if (active) setAuthError('Account status is unavailable.');
+      });
+    return () => { active = false; };
+  }, [pathname]);
+
+  const handleAccountButton = async () => {
+    if (!isSignedIn) {
+      router.push('/login');
+      return;
+    }
+    setAuthError('');
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not log out.');
+      setIsSignedIn(false);
+      setUserName('');
+      router.push('/login');
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Could not log out.');
+    }
+  };
 
   const clearCloseTimeout = () => {
     if (hoverTimeout.current) {
@@ -76,33 +121,37 @@ const { isManagingAvailability, toggleAvailabilityManagement } = useAvailability
   };
 
   return (
-    <nav style={{height:'60px',zIndex:'1',background: 'rgba(255, 255, 255, 0.15)', backdropFilter: 'blur(12px)'}} className='header'>
-        <div>
-          <span style={{marginLeft:'20px',padding:'10px 20px',marginRight:'20px',fontWeight:'bold',color:'#FFD54F'}}>WELCOME TO BEST CHOICE</span>
-          <button onClick={() => router.push('/')} style={{ backgroundColor: "",cursor:'pointer', color: "white", padding: "5px 10px", borderRadius: "5px" }}>HOME</button>
+    <nav className="header">
+      <div className="header-main">
+        <div className="header-brand">
+          <Link href="/" className="header-logo-link" aria-label="TiffinNest home">
+            <Image
+              src="/images/Tiffin%20Nest.svg.png"
+              alt="TiffinNest — Good Food. Closer to You."
+              width={440}
+              height={220}
+              priority
+              className="header-logo"
+            />
+          </Link>
+          <button className="header-home" onClick={() => router.push('/')}>HOME</button>
           <Button
-        onMouseEnter={handleButtonEnter}
-        onMouseLeave={handleButtonLeave}
-        style={{
-            backgroundColor: "",
-            color: "white",
-            fontSize: "17px",
-            borderRadius: "5px",
-          }}
-      >
-        <LocationOnIcon style={{ color: '#FFD54F',cursor:'pointer' }} />
-      </Button>
+            aria-label="Choose delivery area"
+            onMouseEnter={handleButtonEnter}
+            onMouseLeave={handleButtonLeave}
+            className="header-location"
+          >
+            <LocationOnIcon />
+          </Button>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
-          <div>
+        <div className="header-actions">
             <input
-        type="text"
-        spellCheck={false} 
-        placeholder="Search items..."
-        className='search-input'
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-          </div>
+              type="text"
+              spellCheck={false}
+              placeholder="Search items..."
+              className="search-input"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           <Button
             type="button"
             aria-pressed={isManagingAvailability}
@@ -118,77 +167,80 @@ const { isManagingAvailability, toggleAvailabilityManagement } = useAvailability
           >
             {isManagingAvailability ? 'Done' : 'Manage Items'}
           </Button>
-          <div>
-            <h3 style={{color:'#FFD54F',letterSpacing:'3px',marginLeft:'20px'}}>ORDER BELOW SPECIAL ITEMS</h3>
-            <h3 style={{gap:'10px',display:'flex',color:' whitesmoke',letterSpacing:'0px',marginLeft:'10px'}}>
-                    <Link className='snacks' href="/dosa" style={{background:'',padding:'2px 10px 1px 10px',borderRadius: '15px'}}>DOSA</Link>
-                    <Link className='snacks' href="/bonda"  style={{padding:'2px 10px 1px 10px',borderRadius: '15px'}}>BONDA</Link> 
-                    <Link className='snacks' href="/bajji" style={{padding:'2px 10px 1px 10px',borderRadius: '15px'}}>BAJJI</Link>
-                    <Link className='snacks' href="/vada" style={{padding:'2px 10px 1px 10px',borderRadius: '15px'}}>VADA</Link>
-                    <Link className='snacks' href="/puri" style={{padding:'2px 10px 1px 10px',borderRadius: '15px'}}>PURI</Link>
-            </h3>
-          </div>
-          <div style={{ display: 'inline-block' }}>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => setAnchorEl(null)}
-        className='dropdown'
-        // Keep open while hovering the menu
-        MenuListProps={{
-          onMouseEnter: handleMenuEnter,
-          onMouseLeave: handleMenuLeave,
-          sx: { py: 0.5 },
-        }}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        // Improves UX in Next.js App Router
-        keepMounted
-        
-      >
-        {areas.map((area) => (
-          <MenuItem
-            key={area}
-            style={{width:'200px'}}
-            onClick={() => handleSelect(area)}
-            className='dropdown-content'
-           sx={{
-    position: 'relative',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      bottom: 4,
-      width: 0,
-      height: '2px',
-      backgroundColor: 'orange',
-      transition: 'width 0.3s ease',
-    },
-    '&:hover::after': {
-      width: '100%',
-    },
-  }}
+          {availabilityError && <span role="alert" className="header-error">{availabilityError}</span>}
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => setAnchorEl(null)}
+            className="dropdown"
+            MenuListProps={{
+              onMouseEnter: handleMenuEnter,
+              onMouseLeave: handleMenuLeave,
+              sx: { py: 0.5 },
+            }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+            keepMounted
           >
-            {area}
-          </MenuItem>
-        ))}
-      </Menu>
-    </div>
+            {areas.map((area) => (
+              <MenuItem
+                key={area}
+                onClick={() => handleSelect(area)}
+                className="dropdown-content"
+                sx={{
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 4,
+                    width: 0,
+                    height: '2px',
+                    backgroundColor: 'orange',
+                    transition: 'width 0.3s ease',
+                  },
+                  '&:hover::after': { width: '100%' },
+                }}
+              >
+                {area}
+              </MenuItem>
+            ))}
+          </Menu>
           <Badge badgeContent={cartCount} color="secondary">
-      <ShoppingCartIcon onClick={() => router.push('/cart')} style={{ fontSize: 28, cursor: 'pointer',color:'#FFD54F' }} />
-    </Badge>
+            <ShoppingCartIcon
+              aria-label="Shopping cart"
+              onClick={() => router.push('/cart')}
+              style={{ fontSize: 28, cursor: 'pointer', color: '#FFD54F' }}
+            />
+          </Badge>
           <Button
             sx={{ borderRadius: 3, fontWeight: 'bold' }}
-            onClick={() => router.push('/login')}
-            style={{
-            backgroundColor: "",
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "5px",
-          }}>
-            LOGIN
+            onClick={() => router.push('/orders')}
+            className="header-action-button">
+            MY ORDERS
           </Button>
+          {isSignedIn && userName && (
+            <span className="header-user-name">Hi, {userName}</span>
+          )}
+          <Button
+            sx={{ borderRadius: 3, fontWeight: 'bold' }}
+            onClick={handleAccountButton}
+            className="header-action-button"
+          >
+            {isSignedIn ? 'LOGOUT' : 'LOGIN'}
+          </Button>
+          {authError && <span role="alert" className="header-error">{authError}</span>}
         </div>
+      </div>
+      <div className="header-categories">
+        <h3>ORDER BELOW SPECIAL ITEMS</h3>
+        <div className="header-category-links">
+          <Link className="snacks" href="/dosa">DOSA</Link>
+          <Link className="snacks" href="/bonda">BONDA</Link>
+          <Link className="snacks" href="/bajji">BAJJI</Link>
+          <Link className="snacks" href="/vada">VADA</Link>
+          <Link className="snacks" href="/puri">PURI</Link>
+        </div>
+      </div>
     </nav>
   )
 }

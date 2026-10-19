@@ -8,17 +8,42 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [tel, setTel] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Registering:', { name, email, password, tel });
-    // Add register logic here
+    setError('');
+    setSuccess('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone: tel, password }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || 'Unable to register. Please try again.');
+        return;
+      }
+
+      setSuccess('Your account was created. You can now log in.');
+      setPassword('');
+    } catch {
+      setError('Could not reach the server. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <main style={styles.container}>
-      <h2 style={styles.title}>REGISTER TO BEST CHOICE</h2>
+      <h2 style={styles.title}>REGISTER TO TIFFINNEST</h2>
       <form onSubmit={handleRegister} style={styles.form}>
         <input
           type="text"
@@ -34,6 +59,7 @@ export default function RegisterPage() {
           value={tel}
           onChange={(e) => setTel(e.target.value)}
           style={styles.input}
+          maxLength={10}
           required
         />
         <input
@@ -50,9 +76,14 @@ export default function RegisterPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={styles.input}
+          minLength={8}
           required
         />
-        <button type="submit" style={styles.button}>Submit</button>
+        {error && <p role="alert" style={styles.error}>{error}</p>}
+        {success && <p role="status" style={styles.success}>{success}</p>}
+        <button type="submit" style={styles.button} disabled={isLoading}>
+          {isLoading ? 'Creating account...' : 'Submit'}
+        </button>
         <button type="button" onClick={()=>router.push('/login')} style={styles.loginButton}>Back To Login</button>
       </form>
     </main>
@@ -75,4 +106,6 @@ const styles: Record<string, React.CSSProperties> = {
   input: { padding: '10px', borderRadius: 6, border: '1px solid #ccc', color: 'white', background: 'rgba(255,255,255,0.1)' },
   button: { padding: '10px', backgroundColor: 'orange', color: 'black', cursor: 'pointer', border: 'none', borderRadius: 6 },
   loginButton: { padding: '10px', backgroundColor: 'purple', cursor: 'pointer', color: 'white', border: 'none', borderRadius: 6 },
+  error: { color: '#ffb4b4', margin: 0 },
+  success: { color: '#a7f3d0', margin: 0 },
 };

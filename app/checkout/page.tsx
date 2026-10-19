@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useCart } from '../context/CartContext';
-import { useOrderDemo } from '../context/OrderDemoContext';
 import { DELIVERY_FEE, SHOP_NAME, SHOP_UPI_ID } from '../config/shop';
 
 const panelStyle: React.CSSProperties = {
@@ -18,7 +17,6 @@ const panelStyle: React.CSSProperties = {
 
 export default function CheckoutPage() {
   const { cartItems, clearCart } = useCart();
-  const { submitDemoOrder } = useOrderDemo();
   const [customerName, setCustomerName] = useState('');
   const [mobile, setMobile] = useState('');
   const [transactionId, setTransactionId] = useState('');
@@ -28,6 +26,10 @@ export default function CheckoutPage() {
   const [orderTime, setOrderTime] = useState('');
   const [copyMessage, setCopyMessage] = useState('');
   const [uploadError, setUploadError] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [accountError, setAccountError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const subtotal = cartItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
   const total = subtotal + DELIVERY_FEE;
@@ -44,6 +46,32 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setOrderTime(new Date().toLocaleString());
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/auth/me')
+      .then(async (response) => {
+        if (response.status === 401) {
+          if (active) setIsAuthenticated(false);
+          return;
+        }
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.error || 'Could not check your account.');
+        }
+        const result = await response.json();
+        if (active) {
+          setIsAuthenticated(true);
+          setCustomerName(result.user.name);
+          setMobile(result.user.phone);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('Could not check signed-in account.', error);
+        if (active) setAccountError(error instanceof Error ? error.message : 'Could not check your account.');
+      });
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
@@ -86,30 +114,34 @@ export default function CheckoutPage() {
     setScreenshot(file);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!screenshot || cartItems.length === 0) return;
+    setSubmitError('');
+    setIsSubmitting(true);
 
-    const now = new Date();
-    const id = submitDemoOrder({
-      customerName: customerName.trim(),
-      mobile,
-      items: cartItems.map((item) => ({
-        slug: item.slug,
-        title: item.title,
-        price: Number(item.price),
-        quantity: item.quantity,
-        img: item.img,
-      })),
-      total,
-      paymentMethod: 'UPI',
-      screenshot,
-      transactionId: transactionId.trim(),
-      createdAt: now.toISOString(),
-    });
+    try {
+      const form = new FormData();
+      form.set('customerName', customerName.trim());
+      form.set('mobile', mobile);
+      form.set('transactionId', transactionId.trim());
+      form.set('items', JSON.stringify(cartItems.map(({ slug, quantity }) => ({ slug, quantity }))));
+      form.set('screenshot', screenshot);
 
-    setOrderId(id);
-    clearCart();
+      const response = await fetch('/api/orders', { method: 'POST', body: form });
+      const result = await response.json();
+      if (!response.ok) {
+        setSubmitError(result.error || 'Unable to submit your order.');
+        return;
+      }
+
+      setOrderId(result.orderId);
+      clearCart();
+    } catch {
+      setSubmitError('Could not reach the server. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (orderId) {
@@ -119,12 +151,12 @@ export default function CheckoutPage() {
           <div style={{ fontSize: 48 }} aria-hidden="true">✓</div>
           <h1>Order Submitted Successfully!</h1>
           <p>Your order ID is <strong>#{orderId}</strong>.</p>
-          <p>The shopkeeper will verify your payment and process your order.</p>
+          <p>The shopkeeper will verify your payment and process your order. Your order is saved in your account.</p>
           <p><strong>Payment Verification Pending</strong></p>
           <p style={{ color: '#ffe082', fontSize: 14 }}>
-            Demo only: this order and screenshot exist in this app session. No payment was verified, no database was written, and no notification was sent.
+            Payment has not been verified automatically. Keep your order ID for reference.
           </p>
-          <Link href="/shopkeeper/orders" style={{ color: '#90caf9' }}>Open demo shopkeeper dashboard</Link>
+          <Link href="/orders" style={{ color: '#90caf9' }}>View your order history</Link>
           <div><Link href="/" style={{ display: 'inline-block', marginTop: 20, color: '#90caf9' }}>Continue shopping</Link></div>
         </section>
       </main>
@@ -190,6 +222,10 @@ export default function CheckoutPage() {
       <form onSubmit={handleSubmit} style={panelStyle}>
         <h2>Upload Payment Screenshot</h2>
         <p style={{ color: '#ffe082' }}>Payment Pending · Screenshot is required before order submission.</p>
+        {isAuthenticated === false && (
+          <p role="alert">Log in before submitting an order. <Link href="/login" style={{ color: '#90caf9' }}>Log in</Link></p>
+        )}
+        {accountError && <p role="alert">{accountError}</p>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 14 }}>
           <label style={fieldLabelStyle}>
             Customer name *
@@ -208,16 +244,17 @@ export default function CheckoutPage() {
           Payment screenshot *
           <input required type="file" accept="image/*" onChange={(event) => handleScreenshotChange(event.target.files?.[0])} style={{ ...inputStyle, padding: 10 }} />
         </label>
-        <p style={{ fontSize: 13, opacity: 0.8 }}>Images only, up to 5 MB. Demo only: the file is kept in browser memory and is not uploaded or securely stored.</p>
+        <p style={{ fontSize: 13, opacity: 0.8 }}>JPEG, PNG, or WebP images up to 5 MB are stored with your order for payment verification.</p>
         {uploadError && <p role="alert" style={{ color: '#ffcdd2' }}>{uploadError}</p>}
+        {submitError && <p role="alert" style={{ color: '#ffcdd2' }}>{submitError}</p>}
         {screenshot && (
           <div style={{ marginTop: 12 }}>
             <p style={{ color: '#a5d6a7' }}>Screenshot Uploaded: {screenshot.name}</p>
             {screenshotUrl && <img src={screenshotUrl} alt="Payment screenshot preview" style={{ maxWidth: 220, maxHeight: 220, objectFit: 'contain', borderRadius: 8, background: 'white' }} />}
           </div>
         )}
-        <button type="submit" disabled={!screenshot} style={{ ...primaryButtonStyle, opacity: screenshot ? 1 : 0.55, cursor: screenshot ? 'pointer' : 'not-allowed', marginTop: 18 }}>
-          Submit Order
+        <button type="submit" disabled={!screenshot || isSubmitting || isAuthenticated !== true} style={{ ...primaryButtonStyle, opacity: screenshot && isAuthenticated && !isSubmitting ? 1 : 0.55, cursor: screenshot && isAuthenticated && !isSubmitting ? 'pointer' : 'not-allowed', marginTop: 18 }}>
+          {isSubmitting ? 'Submitting order...' : 'Submit Order'}
         </button>
       </form>
     </main>

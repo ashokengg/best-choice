@@ -1,0 +1,18 @@
+export const DEFAULT_AVAILABILITY: Record<string, boolean> = {
+  dosa: false,
+  bonda: true,
+  bajji: true,
+  'medu-vada': true,
+  'masala-vada': true,
+  puri: false,
+  idli: false,
+  upma: false,
+  pesarattu: false,
+  samosa: false,
+  pakora: false,
+  'bhel-puri': false,
+  'sev-puri': false,
+  'pav-bhaji': false,
+  jalebi: false,
+  vada: false,
+};
