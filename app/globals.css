@@ -74,13 +74,13 @@ nav {
 }
 .header {
   z-index: 10;
-  min-height: 60px;
+  min-height: 0;
   height: auto;
-  padding: 12px 24px;
-  border-radius: 24px;
+  padding: 4px 18px;
+  border-radius: 20px;
   flex-direction: column;
   align-items: stretch;
-  gap: 10px;
+  gap: 2px;
   background: rgba(20, 24, 38, 0.78);
   backdrop-filter: blur(12px);
 }
@@ -94,91 +94,143 @@ nav {
 .header-main {
   width: 100%;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
 }
 .header-brand {
   flex: 0 0 auto;
-  gap: 12px;
+  gap: 8px;
+}
+.header-logo-group {
+  display: flex;
+  flex: 0 0 130px;
+  width: 130px;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
 }
 .header-logo-link {
   display: flex;
-  flex: 0 0 auto;
+  flex: 0 0 65px;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
-  width: 220px;
-  height: 74px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: 16px;
-  background: #fff9e8;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 65px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 .header-logo-link:hover {
   transform: translateY(-1px);
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
 }
 .header-logo {
+  display: block;
+  flex: 0 0 auto;
   width: 100%;
+  max-width: 100%;
   height: 100%;
-  object-fit: cover;
+  border-radius: inherit;
+  object-fit: contain;
   object-position: center;
+  image-rendering: auto;
+  margin-top: 10px;
+}
+.header-welcome {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  color: #ffd54f;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
 }
 .header-home,
 .header-action-button {
   color: white !important;
+  font-size: 0.82rem !important;
   white-space: nowrap;
 }
 .header-home {
-  padding: 5px 10px;
+  padding: 4px 8px;
+  font-size: 0.82rem;
   border: 0;
   border-radius: 5px;
   background: transparent;
   cursor: pointer;
 }
 .header-location {
-  min-width: 36px !important;
-  padding: 6px !important;
+  min-width: 32px !important;
+  padding: 4px !important;
   color: #ffd54f !important;
+}
+.header-location .MuiSvgIcon-root {
+  font-size: 20px;
 }
 .header-actions {
   min-width: 0;
   justify-content: flex-end;
-  gap: 14px;
+  gap: 10px;
+}
+.header-search-tools {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.header-actions .MuiButton-root {
+  min-width: 0;
+  padding: 5px 9px;
+  font-size: 0.78rem;
 }
 .header-actions .search-input {
   width: clamp(140px, 17vw, 220px);
+  padding: 4px 13px;
+  font-size: 0.82rem;
 }
 .header-user-name {
   color: #ffd54f;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
 .header-error {
   color: #ffcdd2;
-  font-size: 12px;
+  font-size: 11px;
 }
 .header-categories {
   display: flex;
-  align-items: right;
+  align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 10px 24px;
+  gap: 6px 18px;
 }
 .header-categories h3 {
   margin: 0;
   color: #ffd54f;
-  font-size: 14px;
-  letter-spacing: 2px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
 }
 .header-category-links {
   justify-content: center;
-  gap: 10px;
+  gap: 7px;
 }
 .header-category-links .snacks {
-  padding: 2px 10px 4px;
+  padding: 0 7px 2px;
   border-radius: 15px;
   color: whitesmoke;
+  font-size: 0.8rem;
   text-decoration: none;
 }
 .search-input {
@@ -203,10 +255,13 @@ nav {
     flex-wrap: wrap;
     gap: 8px 12px;
   }
+  .header-search-tools {
+    justify-content: center;
+  }
 }
 @media (max-width: 560px) {
   .header {
-    padding: 10px 12px;
+    padding: 7px 10px;
     border-radius: 20px;
   }
   .header-brand {
@@ -214,11 +269,20 @@ nav {
     flex-wrap: wrap;
   }
   .header-logo-link {
-    width: 190px;
-    height: 64px;
+    flex-basis: 55px;
+    width: 110px;
+    height: 55px;
+  }
+  .header-logo-group {
+    flex-basis: 110px;
+    width: 110px;
   }
   .header-actions {
     width: 100%;
+    justify-content: center;
+  }
+  .header-search-tools {
+    max-width: 100%;
   }
   .header-actions .search-input {
     width: min(100%, 250px);

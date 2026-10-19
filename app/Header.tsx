@@ -124,16 +124,21 @@ const [authError, setAuthError] = useState('');
     <nav className="header">
       <div className="header-main">
         <div className="header-brand">
-          <Link href="/" className="header-logo-link" aria-label="TiffinNest home">
-            <Image
-              src="/images/Tiffin%20Nest.svg.png"
-              alt="TiffinNest — Good Food. Closer to You."
-              width={440}
-              height={220}
-              priority
-              className="header-logo"
-            />
-          </Link>
+          <div className="header-logo-group">
+            <Link href="/" className="header-logo-link" aria-label="TiffinNest home">
+              <Image
+                src="/images/Tiffin%20Nest.svg.png"
+                alt="TiffinNest — Good Food. Closer to You."
+                width={440}
+                height={220}
+                quality={100}
+                sizes="(max-width: 560px) 130px, 150px"
+                priority
+                className="header-logo"
+              />
+            </Link>
+            <span className="header-welcome">Welcome to Lalitha Food&apos;s</span>
+          </div>
           <button className="header-home" onClick={() => router.push('/')}>HOME</button>
           <Button
             aria-label="Choose delivery area"
@@ -145,6 +150,7 @@ const [authError, setAuthError] = useState('');
           </Button>
         </div>
         <div className="header-actions">
+          <div className="header-search-tools">
             <input
               type="text"
               spellCheck={false}
@@ -167,6 +173,7 @@ const [authError, setAuthError] = useState('');
           >
             {isManagingAvailability ? 'Done' : 'Manage Items'}
           </Button>
+          </div>
           {availabilityError && <span role="alert" className="header-error">{availabilityError}</span>}
           <Menu
             anchorEl={anchorEl}
@@ -238,7 +245,6 @@ const [authError, setAuthError] = useState('');
           <Link className="snacks" href="/bonda">BONDA</Link>
           <Link className="snacks" href="/bajji">BAJJI</Link>
           <Link className="snacks" href="/vada">VADA</Link>
-          <Link className="snacks" href="/puri">PURI</Link>
         </div>
       </div>
     </nav>
