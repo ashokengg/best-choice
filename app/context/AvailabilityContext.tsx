@@ -23,12 +23,11 @@ export function AvailabilityProvider({ children }: { children: React.ReactNode }
     fetch('/api/availability')
       .then(async (response) => {
         const result = await response.json();
-        if (!response.ok) throw new Error(result.error || 'Could not load item availability.');
+        if (!response.ok) return;
         if (active) setAvailability({ ...DEFAULT_AVAILABILITY, ...result.availability });
       })
-      .catch((error: unknown) => {
-        console.error('Could not load item availability from the server.', error);
-        if (active) setAvailabilityError('Could not load item availability from the database.');
+      .catch(() => {
+        console.warn('Could not reach the availability API; using default availability.');
       });
     return () => { active = false; };
   }, []);

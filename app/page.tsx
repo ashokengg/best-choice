@@ -65,6 +65,10 @@ export default function SnackCards() {
             padding: '12px',
             color: 'white',
             backdropFilter: 'blur(10px)',
+            boxSizing: 'border-box',
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
             zIndex: 1,
           }}
         >
@@ -80,8 +84,8 @@ export default function SnackCards() {
             <AvailabilityToggle slug={item.slug} title={item.title} />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontWeight: 600,marginRight:'10px' }}>{item.price}</span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginTop: 'auto' }}>
+            <span style={{ fontWeight: 600 }}>{item.price}</span>
               <motion.button
                 whileTap={isAvailable(item.slug) ? { scale: 0.97 } : undefined}
                 disabled={!isAvailable(item.slug)}
@@ -97,7 +101,6 @@ export default function SnackCards() {
                   padding: '4px 6px',
                   fontSize: 11,
                   cursor: isAvailable(item.slug) ? 'pointer' : 'not-allowed',
-                  marginRight:'10px'
                 }}
               >
                 {isAvailable(item.slug) ? 'Add to Cart' : 'Not Available'}
@@ -113,7 +116,6 @@ export default function SnackCards() {
                   padding: '4px 6px',
                   fontSize: 11,
                   cursor: 'pointer',
-                  marginRight:'10px'
                 }}
               >
                 more info<ArrowForward style={{ fontSize: 14, marginLeft: 4 }} />

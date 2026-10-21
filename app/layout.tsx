@@ -29,7 +29,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         backgroundPosition: "center",
         minHeight: "100vh",
         width: "100%",
-        backgroundImage: "url('/images/tiffin_background2.svg.png')",
+        backgroundColor:"#198ed4c9",
+        // backgroundImage: "url('/images/tiffin_background2.svg.png')",
         backgroundAttachment: "fixed",
         }}
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
