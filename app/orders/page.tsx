@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import styles from './page.module.css';
 
 type OrderItem = { slug: string; title: string; price: number; quantity: number };
 type Order = {
@@ -40,16 +41,16 @@ export default function OrderHistoryPage() {
   }, []);
 
   return (
-    <main style={{ maxWidth: 900, margin: '32px auto', padding: 20, color: 'white' }}>
-      <section style={{ background: 'rgba(10,31,65,.94)', borderRadius: 18, padding: 24 }}>
+    <main className={styles.main}>
+      <section className={styles.panel}>
         <h1>My Order History</h1>
         {isLoading && <p>Loading your orders…</p>}
-        {needsLogin && <p>Please <Link href="/login" style={{ color: '#90caf9' }}>log in</Link> to see your orders.</p>}
+        {needsLogin && <p>Please <Link href="/login" className={styles.loginLink}>log in</Link> to see your orders.</p>}
         {error && <p role="alert">{error}</p>}
         {!isLoading && !needsLogin && !error && orders.length === 0 && <p>You have not placed any orders yet.</p>}
-        <div style={{ display: 'grid', gap: 16 }}>
+        <div className={styles.orders}>
           {orders.map((order) => (
-            <article key={order.id} style={{ border: '1px solid rgba(255,255,255,.2)', borderRadius: 12, padding: 18 }}>
+            <article key={order.id} className={styles.order}>
               <h2>Order #{order.id}</h2>
               <p>{new Date(order.createdAt).toLocaleString()}</p>
               <ul>

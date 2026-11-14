@@ -1,0 +1,65 @@
+.container {
+  max-width: 400px;
+  margin: 150px auto;
+  padding: 20px;
+}
+
+.title {
+  margin-bottom: 20px;
+  padding: 10px 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.error {
+  margin-bottom: 8px;
+  color: red;
+  font-size: 14px;
+}
+
+.submitButton {
+  margin-top: 16px;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  background: purple !important;
+  color: white !important;
+}
+
+.forgot {
+  margin-top: 8px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.registerLink {
+  text-decoration: none;
+}
+
+.secondaryButton {
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: orange;
+  color: black;
+  cursor: pointer;
+}

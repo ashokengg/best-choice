@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import { useAvailability } from '../context/AvailabilityContext';
 import AvailabilityToggle from '../components/AvailabilityToggle';
+import styles from '../productDetail.module.css';
 
 export default function Card() {
   const router = useRouter();
@@ -26,39 +27,20 @@ const card = {
           variants={container}
           initial="hidden"
           animate="show"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '16px',
-            padding: '20px',
-            width: "800px",
-            height: "650px",
-            margin: "auto",
-          }}
+          className={styles.container}
         >
         <motion.div
                   variants={card}
                   whileHover="hover"
-                  className="description"
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: '14px',
-                    padding: '12px',
-                    color: 'whitesmoke',
-                    backdropFilter: 'blur(80px)',
-                    display:'flex',
-                    flexDirection:'column',
-                    alignItems:'center'
-                  }}
+                  className={`description ${styles.card}`}
                 >
-        <img src="/images/bajji.svg" alt="Bajji" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
-        <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>BAJJI</h3>
+        <img src="/images/bajji.svg" alt="Bajji" className={styles.image} />
+        <h3 className={styles.title}>BAJJI</h3>
         <AvailabilityToggle slug="bajji" title="Bajji" />
-       <p style={{fontWeight:'bold'}}>
+       <p className={styles.description}>
         Bajji is a popular South Indian fritter made by dipping sliced vegetables in a spiced gram flour batter and deep-frying until golden and crispy.
       </p>
-      <ul style={{ listStyleType: "disc", paddingLeft: "20px",fontSize:'14PX',marginTop:'10px' }}>
+      <ul className={styles.details}>
         <li>It’s a beloved street food and tea-time snack, often served hot with chutneys or ketchup.</li>
         <li>Bajji is typically made with onions, potatoes, raw bananas, eggplant, or green chilies.</li>
         <li>The vegetables are sliced, dipped in a batter of gram flour (besan), rice flour, chili powder, turmeric, and salt.</li>
@@ -66,21 +48,10 @@ const card = {
         <li>Bajji pairs wonderfully with coconut chutney, mint chutney, or simply a cup of hot chai.</li>
         <li>Regional Variations: Bajji is known by different names across India — onion bhaji in Maharashtra, bhajia in Gujarat, and pakora in North India. Despite the variations, the essence remains the same: crispy fritters made from gram flour batter</li>
       </ul>
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'100px'}}>
+      <div className={`${styles.actions} ${styles.actionsWithGap}`}>
         <button 
         onClick={()=> router.push('/')}
-        style={{
-            position: "fixed",
-            bottom: "10px",
-            backgroundColor: "whitesmoke",
-            border: "none",
-            padding: "4px 10px",
-            borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
-            marginRight: "200px",
-            fontWeight: "bold"
-        }}>
+        className={styles.backButton}>
             Back
         </button>
         <button 
@@ -90,17 +61,7 @@ const card = {
             addToCart({ slug: 'bajji', title: 'Bajji', price: 35, img: '/images/bajji.svg'});
           }
         }}
-        style={{
-            position: "fixed",
-            bottom: "10px",
-            backgroundColor: isAvailable('bajji') ? "yellow" : "#777",
-            border: "none",
-            padding: "4px 20px",
-            borderRadius: "10px",
-            cursor: isAvailable('bajji') ? "pointer" : "not-allowed",
-            color: isAvailable('bajji') ? "black" : "white",
-            fontWeight: "bold",
-        }}>
+        className={styles.addButton}>
             {isAvailable('bajji') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>

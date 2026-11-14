@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import styles from './otpPopup.module.css';
 
 export default function OtpPopup({ onClose }: { onClose: () => void }) {
   const [otp, setOtp] = useState("");
@@ -36,7 +37,7 @@ export default function OtpPopup({ onClose }: { onClose: () => void }) {
           margin="normal"
         />
         {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
+          <Typography color="error" className={styles.error}>
             {error}
           </Typography>
         )}

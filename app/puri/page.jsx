@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import { useAvailability } from '../context/AvailabilityContext';
 import AvailabilityToggle from '../components/AvailabilityToggle';
+import styles from '../productDetail.module.css';
 
 export default function Card() {
   const router = useRouter();
@@ -26,36 +27,20 @@ const card = {
               variants={container}
               initial="hidden"
               animate="show"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '16px',
-                padding: '20px',
-                width: "800px",
-                height: "650px",
-                margin: "auto",
-              }}
+              className={styles.container}
             >
             <motion.div
                       variants={card}
                       whileHover="hover"
-                      className="description"
-                      style={{
-                        background: 'rgba(255,255,255,0.08)',
-                        border: '1px solid rgba(255,255,255,0.15)',
-                        borderRadius: '14px',
-                        padding: '12px',
-                        color: 'whitesmoke',
-                        backdropFilter: 'blur(80px)',display:'flex',flexDirection:'column',alignItems:'center',
-                      }}
+                      className={`description ${styles.card}`}
                     >
-          <img src="/images/puri.svg" alt="Puri" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
-          <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>PURI</h3>
+          <img src="/images/puri.svg" alt="Puri" className={styles.image} />
+          <h3 className={styles.title}>PURI</h3>
           <AvailabilityToggle slug="puri" title="Puri" />
-          <p style={{fontWeight:'bold'}}>
+          <p className={styles.description}>
               Puri is a traditional Indian deep‑fried bread made from unleavened wheat flour dough, rolled into small discs and fried until it puffs up.
           </p>
-          <ul style={{ listStyleType: "disc", paddingLeft: "20px",fontSize:'14PX',marginTop:'10px' }}>
+          <ul className={styles.details}>
               <li>Preparation: The dough is made from whole wheat flour, water, and a pinch of salt. It’s rolled into small circles and deep-fried in hot oil until it puffs up and turns golden brown.</li>
               <li>A staple breakfast or festive dish in Indian cuisine, puri is served hot and pairs with curries, vegetables, or sweets.</li>
               <li>Symbol of celebration and hospitality, puri often appears at weddings, festivals, and family gatherings.</li>
@@ -63,21 +48,10 @@ const card = {
               <li>Serving Tip: Enjoy hot, straight from the pan for maximum fluffiness.Symbol of warmth and hospitality in Indian households.</li>
           </ul>
     
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+      <div className={styles.actions}>
        <button 
         onClick={()=> router.push('/')}
-        style={{
-            position: "fixed",
-            bottom: "10px",
-            backgroundColor: "whitesmoke",
-            border: "none",
-            padding: "4px 10px",
-            borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
-            marginRight: "200px",
-            fontWeight: "bold"
-        }}>
+        className={styles.backButton}>
             Back
         </button>
         <button 
@@ -87,17 +61,7 @@ const card = {
             addToCart({ slug: 'puri', title: 'Puri', price: 60, img: '/images/puri.svg' });
           }
         }}
-        style={{
-            position: "fixed",
-            bottom: "10px",
-            backgroundColor: isAvailable('puri') ? "yellow" : "#777",
-            border: "none",
-            padding: "4px 20px",
-            borderRadius: "10px",
-            cursor: isAvailable('puri') ? "pointer" : "not-allowed",
-            color: isAvailable('puri') ? "black" : "white",
-            fontWeight: "bold",
-        }}>
+        className={styles.addButton}>
             {isAvailable('puri') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>

@@ -1,18 +1,16 @@
 "use client";
-import { useState } from "react";
 import { useCart } from "../context/CartContext";
-import Link from "next/link";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+import styles from './floatingCheckout.module.css';
 
 export default function FloatingCheckout() {
   const { cartItems } = useCart();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
 
   // calculate total
   const total = cartItems.reduce(
-    (sum: number, item: any) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
@@ -20,11 +18,11 @@ export default function FloatingCheckout() {
 
   return (
     <>
-      <div className="floating-checkout" onClick={() => setOpen(true)}>
+      <div className="floating-checkout">
         <span>🛒 View Cart ({cartItems.length} items)</span>
         <div>
-            <Button size='small'style={{marginRight:'30px', border:'1px solid',color:'white'}}onClick={()=>router.push('/cart')}>Remove</Button>
-        <Button size='small'style={{marginRight:'30px', border:'1px solid',color:'white'}}onClick={()=>router.push('/cart')}>Checkout</Button>
+            <Button size='small' className={styles.actionButton} onClick={()=>router.push('/cart')}>Remove</Button>
+        <Button size='small' className={styles.actionButton} onClick={()=>router.push('/cart')}>Checkout</Button>
         <span>Total: ₹{total}</span>
         </div>
       </div>

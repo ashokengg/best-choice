@@ -10,6 +10,7 @@ import AvailabilityToggle from './components/AvailabilityToggle';
 import { MENU_PRODUCTS } from './config/products';
 import FavoriteButton from './components/FavoriteButton';
 import CartQuantityControl from './components/CartQuantityControl';
+import styles from './page.module.css';
 
 const items = MENU_PRODUCTS;
 const container: Variants = {
@@ -43,56 +44,32 @@ export default function SnackCards() {
       variants={container}
       initial="hidden"
       animate="show"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(6, 1fr)',
-        gap: '16px',
-        padding: '20px',
-        zIndex: 1
-      }}
+      className={styles.grid}
     >
       {filteredItems.map((item) => (
         <motion.div
           key={item.slug}
           variants={card}
           whileHover="hover"
-          style={{
-            background: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            borderRadius: '14px',
-            padding: '12px',
-            color: 'white',
-            backdropFilter: 'blur(10px)',
-            boxSizing: 'border-box',
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            zIndex: 1,
-          }}
+          className={styles.card}
         >
           <FavoriteButton className="favorite-button--card" slug={item.slug} title={item.title} />
-          <img src={item.img} alt={item.title} style={{
-            height: 70,
-            width: '50%',
-            borderRadius: 10,
-            marginBottom: 10
-          }} />
-          <h4 style={{ margin: '0 0 6px', letterSpacing: '0.5px'}}>{item.title}</h4>
-          <p style={{ margin: '0 0 10px', fontSize: 13, opacity: 0.9 }}>{item.tagline}</p>
-          <div style={{ marginBottom: 10 }}>
+          <img src={item.img} alt={item.title} className={styles.image} />
+          <h4 className={styles.title}>{item.title}</h4>
+          <p className={styles.tagline}>{item.tagline}</p>
+          <div className={styles.availability}>
             <AvailabilityToggle slug={item.slug} title={item.title} />
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginTop: 'auto' }}>
-            <span style={{ fontWeight: 600 }}>₹{item.price}</span>
+          <div className={styles.actions}>
+            <span className={styles.price}>₹{item.price}</span>
               <CartQuantityControl item={item} />
-              <Link aria-label={`More information about ${item.title}`} className="product-info-link" href={`/${item.slug}`}>
+              <Link aria-label={`More information about ${item.title}`} className={styles.infoLink} href={`/${item.slug}`}>
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                className="product-info-button"
+                className={styles.infoButton}
               >
-              <ArrowForward style={{ fontSize: 14 }} />
+              <ArrowForward fontSize="small" />
               </motion.button>
             </Link>
           </div>

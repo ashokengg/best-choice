@@ -1,0 +1,58 @@
+.container {
+  max-width: 400px;
+  margin: 150px auto;
+  padding: 20px;
+}
+
+.title {
+  margin-bottom: 20px;
+  padding: 10px 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.button,
+.loginButton {
+  padding: 10px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button {
+  background: orange;
+  color: black;
+}
+
+.loginButton {
+  background: purple;
+  color: white;
+}
+
+.error {
+  margin: 0;
+  color: #ffb4b4;
+}
+
+.success {
+  margin: 0;
+  color: #a7f3d0;
+}

@@ -1,0 +1,76 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+  padding: 20px;
+  z-index: 1;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.image {
+  width: 50%;
+  height: 70px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.title {
+  margin: 0 0 6px;
+  letter-spacing: 0.5px;
+}
+
+.tagline {
+  margin: 0 0 10px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.availability {
+  margin-bottom: 10px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.price {
+  font-weight: 600;
+}
+
+.infoLink {
+  display: inline-flex;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.infoButton {
+  display: inline-grid;
+  width: 34px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: white;
+  color: #171717;
+  cursor: pointer;
+}

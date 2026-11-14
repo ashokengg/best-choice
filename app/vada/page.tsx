@@ -5,6 +5,7 @@ import { useAvailability } from '../context/AvailabilityContext';
 import AvailabilityToggle from '../components/AvailabilityToggle';
 import FavoriteButton from '../components/FavoriteButton';
 import CartQuantityControl from '../components/CartQuantityControl';
+import styles from './page.module.css';
 
 const vadaTypes = [
   {
@@ -24,32 +25,29 @@ const vadaTypes = [
 export default function VadaPage() {
   const { isAvailable } = useAvailability();
   return (
-    <main style={{ maxWidth: 900, margin: '40px auto', padding: 24, color: 'white' }}>
-      <h1 style={{ textAlign: 'center' }}>Choose Your Vada</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
+    <main className={styles.main}>
+      <h1 className={styles.title}>Choose Your Vada</h1>
+      <div className={styles.grid}>
         {vadaTypes.map((vada) => (
-          <article
-            key={vada.slug}
-            style={{ padding: 20, borderRadius: 16, background: 'rgba(255,255,255,0.12)', position: 'relative' }}
-          >
+          <article key={vada.slug} className={styles.card}>
             <FavoriteButton className="favorite-button--card" slug={vada.slug} title={vada.title} />
             <img
               src={vada.image}
               alt={vada.title}
-              style={{ display: 'block', width: '100%', borderRadius: 12 }}
+              className={styles.image}
             />
             <h2>{vada.title}</h2>
             <p>{vada.description}</p>
             <AvailabilityToggle slug={vada.slug} title={vada.title} />
             <p>₹30 {isAvailable(vada.slug) ? '' : '· Not available'}</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className={styles.actions}>
               <CartQuantityControl item={{
                 slug: vada.slug,
                 title: vada.title,
                 price: 30,
                 img: vada.image,
               }} />
-              <Link href={`/${vada.slug}`} style={{ color: '#ffe05c', fontWeight: 'bold' }}>
+              <Link href={`/${vada.slug}`} className={styles.details}>
                 View details
               </Link>
             </div>

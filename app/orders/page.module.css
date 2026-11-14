@@ -1,0 +1,30 @@
+.main {
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 20px;
+  color: white;
+}
+
+.order {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.panel {
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(10, 31, 65, 0.94);
+}
+
+.loginLink {
+  color: #90caf9;
+}
+
+.orders {
+  display: grid;
+  gap: 16px;
+}
+
+.order {
+  padding: 18px;
+  border-radius: 12px;
+}

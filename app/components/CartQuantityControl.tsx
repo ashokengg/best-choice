@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useAvailability } from '../context/AvailabilityContext';
 import { useCart } from '../context/CartContext';
+import styles from './CartQuantityControl.module.css';
 
 type CartItemInput = {
   slug: string;
@@ -36,21 +37,21 @@ export default function CartQuantityControl({ item }: { item: CartItemInput }) {
   };
 
   return (
-    <div aria-label={`${item.title} quantity`} className={`cart-quantity-control${quantity > 0 ? ' is-expanded' : ''}`}>
+    <div aria-label={`${item.title} quantity`} className={`${styles.control}${quantity > 0 ? ` ${styles.expanded}` : ''}`}>
       {quantity > 0 && (
         <button
           aria-label={`Decrease ${item.title} quantity`}
-          className="cart-quantity-button"
+          className={styles.button}
           onClick={decrease}
           type="button"
         >
           <RemoveIcon fontSize="small" />
         </button>
       )}
-      {quantity > 0 && <span aria-live="polite" className="cart-quantity-value">{quantity}</span>}
+      {quantity > 0 && <span aria-live="polite" className={styles.value}>{quantity}</span>}
       <button
         aria-label={available ? `Increase ${item.title} quantity` : `${item.title} is not available`}
-        className="cart-quantity-button"
+        className={styles.button}
         disabled={!available}
         onClick={increase}
         type="button"

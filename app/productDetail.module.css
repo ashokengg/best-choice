@@ -1,0 +1,86 @@
+.container {
+  display: grid;
+  width: 800px;
+  height: 650px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: whitesmoke;
+  backdrop-filter: blur(80px);
+}
+
+.image {
+  width: 50%;
+  height: 250px;
+  border-radius: 8px;
+}
+
+.title {
+  width: fit-content;
+  margin: 20px;
+  padding: 5px 20px;
+  border-radius: 30px;
+  background: purple;
+  color: whitesmoke;
+}
+
+.description {
+  font-weight: bold;
+}
+
+.details {
+  margin-top: 10px;
+  padding-left: 20px;
+  font-size: 14px;
+  list-style-type: disc;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actionsWithGap {
+  gap: 100px;
+}
+
+.backButton,
+.addButton {
+  position: fixed;
+  bottom: 10px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.backButton {
+  margin-right: 200px;
+  padding: 4px 10px;
+  background: whitesmoke;
+  color: black;
+}
+
+.addButton {
+  padding: 4px 20px;
+  background: yellow;
+  color: black;
+}
+
+.addButton:disabled {
+  background: #777;
+  color: white;
+  cursor: not-allowed;
+}

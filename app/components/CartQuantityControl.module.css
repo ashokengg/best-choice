@@ -1,0 +1,54 @@
+.control {
+  display: inline-flex;
+  min-width: 34px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  flex: 0 0 auto;
+  padding: 0 2px;
+  border: 1px solid #168a4a;
+  border-radius: 7px;
+  background: #fff;
+  color: #168a4a;
+  box-sizing: border-box;
+  transition: min-width 160ms ease, box-shadow 120ms ease;
+}
+
+.expanded {
+  min-width: 78px;
+}
+
+.control:focus-within {
+  box-shadow: 0 0 0 2px rgba(22, 138, 74, 0.18);
+}
+
+.button {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #168a4a;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.button:not(:disabled):hover {
+  background: rgba(22, 138, 74, 0.1);
+}
+
+.button:disabled {
+  color: #8a9b91;
+  cursor: not-allowed;
+}
+
+.value {
+  min-width: 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}

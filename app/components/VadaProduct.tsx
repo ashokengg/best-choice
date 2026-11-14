@@ -4,6 +4,7 @@ import Link from 'next/link';
 import AvailabilityToggle from './AvailabilityToggle';
 import FavoriteButton from './FavoriteButton';
 import CartQuantityControl from './CartQuantityControl';
+import styles from './VadaProduct.module.css';
 
 type VadaProductProps = {
   slug: 'medu-vada' | 'masala-vada';
@@ -15,24 +16,12 @@ type VadaProductProps = {
 
 export default function VadaProduct({ slug, title, image, description, details }: VadaProductProps) {
   return (
-    <main
-      style={{
-        maxWidth: 800,
-        margin: '40px auto',
-        padding: 24,
-        color: 'whitesmoke',
-        background: 'rgba(255,255,255,0.08)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderRadius: 14,
-        backdropFilter: 'blur(20px)',
-        position: 'relative',
-      }}
-    >
+    <main className={styles.main}>
       <FavoriteButton className="favorite-button--card" slug={slug} title={title} />
       <img
         src={image}
         alt={title}
-        style={{ display: 'block', width: 'min(100%, 520px)', margin: '0 auto', borderRadius: 12 }}
+        className={styles.image}
       />
       <h1>{title}</h1>
       <AvailabilityToggle slug={slug} title={title} />
@@ -40,10 +29,10 @@ export default function VadaProduct({ slug, title, image, description, details }
       <ul>
         {details.map((detail) => <li key={detail}>{detail}</li>)}
       </ul>
-      <p style={{ fontWeight: 'bold' }}>₹30</p>
+      <p className={styles.price}>₹30</p>
       <CartQuantityControl item={{ slug, title, price: 30, img: image }} />
       {' '}
-      <Link href="/vada" style={{ color: '#ffe05c', marginLeft: 12 }}>Other vada types</Link>
+      <Link href="/vada" className={styles.otherVada}>Other vada types</Link>
     </main>
   );
 }

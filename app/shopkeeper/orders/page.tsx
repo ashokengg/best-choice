@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import styles from './page.module.css';
 
 type OrderItem = { slug: string; title: string; price: number; quantity: number };
 type PaymentStatus = 'Payment Verification Pending' | 'Payment Verified' | 'Payment Rejected';
@@ -90,15 +91,7 @@ export default function ShopkeeperOrdersPage() {
       type="button"
       disabled={disabled}
       onClick={action}
-      style={{
-        border: 0,
-        borderRadius: 7,
-        padding: '8px 11px',
-        background: disabled ? '#65758a' : '#1976d2',
-        color: 'white',
-        fontWeight: 600,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      }}
+      className={styles.actionButton}
     >
       {label}
     </button>
@@ -114,7 +107,7 @@ export default function ShopkeeperOrdersPage() {
     const updating = updatingId === order.id;
 
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 14 }}>
+      <div className={styles.actions}>
         {actionButton('Verify Payment', () => updateOrder(order.id, { paymentStatus: 'Payment Verified' }), updating || verified || rejected)}
         {actionButton('Reject Payment', () => updateOrder(order.id, { paymentStatus: 'Payment Rejected' }), updating || verified || rejected)}
         {actionButton('Accept Order', () => updateOrder(order.id, { orderStatus: 'Order Accepted' }), updating || !verified || accepted || preparing || ready || completed || rejected)}
@@ -126,36 +119,36 @@ export default function ShopkeeperOrdersPage() {
   };
 
   return (
-    <main style={{ maxWidth: 1100, margin: '28px auto', padding: 16, color: 'white' }}>
-      <section style={{ background: 'rgba(10,31,65,.94)', borderRadius: 18, padding: 24, border: '1px solid rgba(255,255,255,.2)' }}>
-        <p style={{ color: '#ffe082', fontWeight: 700 }}>SHOPKEEPER ACCESS REQUIRED</p>
+    <main className={styles.main}>
+      <section className={`${styles.panel} ${styles.introPanel}`}>
+        <p className={styles.intro}>SHOPKEEPER ACCESS REQUIRED</p>
         <h1>Shopkeeper Orders</h1>
         <p>Only accounts with the shopkeeper role can view customer orders or payment screenshots.</p>
-        <Link href="/checkout" style={{ color: '#90caf9' }}>Return to checkout</Link>
+        <Link href="/checkout" className={styles.link}>Return to checkout</Link>
       </section>
 
       {needsLogin && (
-        <section style={{ marginTop: 20, background: 'rgba(10,31,65,.94)', borderRadius: 18, padding: 24 }}>
+        <section className={`${styles.panel} ${styles.secondaryPanel}`}>
           <p>Please log in with a shopkeeper account to continue.</p>
-          <Link href="/login?next=%2Fshopkeeper%2Forders" style={{ color: '#90caf9' }}>Log in as shopkeeper</Link>
+          <Link href="/login?next=%2Fshopkeeper%2Forders" className={styles.link}>Log in as shopkeeper</Link>
         </section>
       )}
       {forbidden && (
-        <section style={{ marginTop: 20, background: 'rgba(10,31,65,.94)', borderRadius: 18, padding: 24 }}>
+        <section className={`${styles.panel} ${styles.secondaryPanel}`}>
           <p role="alert">This account does not have shopkeeper access. Ask an administrator to assign the shopkeeper role.</p>
         </section>
       )}
       {isLoading && <p>Loading orders…</p>}
       {error && <p role="alert">{error}</p>}
       {!isLoading && !needsLogin && !forbidden && !error && orders.length === 0 && (
-        <section style={{ marginTop: 20, background: 'rgba(10,31,65,.94)', borderRadius: 18, padding: 24 }}>
+        <section className={`${styles.panel} ${styles.secondaryPanel}`}>
           <h2>No orders yet</h2>
         </section>
       )}
       {orders.length > 0 && (
-        <div style={{ display: 'grid', gap: 18, marginTop: 20 }}>
+        <div className={styles.orders}>
           {orders.map((order) => (
-            <article key={order.id} style={{ background: 'rgba(10,31,65,.94)', borderRadius: 18, padding: 22, border: '1px solid rgba(255,255,255,.2)' }}>
+            <article key={order.id} className={styles.order}>
               <h2>#{order.id}</h2>
               <p><strong>Customer:</strong> {order.customerName} · {order.mobile}</p>
               <p><strong>Items:</strong></p>
@@ -169,7 +162,7 @@ export default function ShopkeeperOrdersPage() {
               <p><strong>Order status:</strong> {order.orderStatus}</p>
               <p><strong>Date/time:</strong> {new Date(order.createdAt).toLocaleString()}</p>
               <p><strong>Reference ID:</strong> {order.transactionId}</p>
-              <p><strong>Payment screenshot:</strong> <a href={`/api/shopkeeper/orders/${order.id}/screenshot`} target="_blank" rel="noreferrer" style={{ color: '#90caf9' }}>View screenshot</a></p>
+              <p><strong>Payment screenshot:</strong> <a href={`/api/shopkeeper/orders/${order.id}/screenshot`} target="_blank" rel="noreferrer" className={styles.link}>View screenshot</a></p>
               {orderActions(order)}
             </article>
           ))}

@@ -15,6 +15,8 @@ import { useAvailability } from './context/AvailabilityContext';
 import { useSearch } from './components/searchBar';
 import SearchProductsModal from './components/SearchProductsModal';
 import { PRODUCTS } from './config/products';
+import { DEFAULT_SPECIAL_ITEMS, MAX_SPECIAL_ITEMS } from './config/specialItems';
+import styles from './Header.module.css';
 
 function Header() { 
 const router = useRouter();
@@ -30,8 +32,16 @@ const [userEmail, setUserEmail] = useState('');
 const [userPhone, setUserPhone] = useState('');
 const [authError, setAuthError] = useState('');
 const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(null);
+const [specialItems, setSpecialItems] = useState<string[]>(DEFAULT_SPECIAL_ITEMS);
+const [specialItemsDraft, setSpecialItemsDraft] = useState<string[]>(DEFAULT_SPECIAL_ITEMS);
+const [isEditingSpecialItems, setIsEditingSpecialItems] = useState(false);
+const [isSavingSpecialItems, setIsSavingSpecialItems] = useState(false);
+const [specialItemsError, setSpecialItemsError] = useState('');
 const isProductDetailsPage = PRODUCTS.some((product) => pathname === `/${product.slug}`);
 const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm]);
+const visibleSpecialItems = specialItems
+  .map((slug) => PRODUCTS.find((product) => product.slug === slug))
+  .filter((product) => product !== undefined);
 
   useEffect(() => {
     let active = true;
@@ -67,6 +77,29 @@ const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm])
     return () => { active = false; };
   }, [pathname]);
 
+  useEffect(() => {
+    let active = true;
+    fetch('/api/special-items')
+      .then(async (response) => {
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Could not load special items.');
+        if (!Array.isArray(result.items) || !result.items.every((slug: unknown) =>
+          typeof slug === 'string' && PRODUCTS.some((product) => product.slug === slug),
+        )) {
+          throw new Error('The saved special items are invalid.');
+        }
+        if (active) {
+          setSpecialItems(result.items);
+          setSpecialItemsError('');
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('Could not load header special items.', error);
+        if (active) setSpecialItemsError(error instanceof Error ? error.message : 'Could not load special items.');
+      });
+    return () => { active = false; };
+  }, []);
+
   const handleAccountButton = async () => {
     if (!isSignedIn) {
       router.push('/login');
@@ -94,6 +127,42 @@ const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm])
       router.push('/');
     }
     toggleAvailabilityManagement();
+  };
+
+  const toggleSpecialItem = (slug: string) => {
+    setSpecialItemsDraft((current) => {
+      if (current.includes(slug)) return current.filter((itemSlug) => itemSlug !== slug);
+      if (current.length >= MAX_SPECIAL_ITEMS) return current;
+      return [...current, slug];
+    });
+  };
+
+  const openSpecialItemsEditor = () => {
+    setSpecialItemsDraft(specialItems);
+    setSpecialItemsError('');
+    setIsEditingSpecialItems(true);
+  };
+
+  const saveSpecialItems = async () => {
+    setIsSavingSpecialItems(true);
+    setSpecialItemsError('');
+    try {
+      const response = await fetch('/api/special-items', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: specialItemsDraft }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Could not save special items.');
+      if (!Array.isArray(result.items)) throw new Error('The server returned an invalid special items list.');
+      setSpecialItems(result.items);
+      setIsEditingSpecialItems(false);
+    } catch (error) {
+      console.error('Could not save header special items.', error);
+      setSpecialItemsError(error instanceof Error ? error.message : 'Could not save special items.');
+    } finally {
+      setIsSavingSpecialItems(false);
+    }
   };
 
   return (
@@ -132,14 +201,7 @@ const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm])
                 type="button"
                 aria-pressed={isManagingAvailability}
                 onClick={handleManageItemsClick}
-                sx={{
-                  borderRadius: 2,
-                  fontWeight: 'bold',
-                  whiteSpace: 'nowrap',
-                  color: 'white',
-                  backgroundColor: isManagingAvailability ? '#6b2d7b' : 'rgba(255,255,255,0.12)',
-                  '&:hover': { backgroundColor: isManagingAvailability ? '#7d368f' : 'rgba(255,255,255,0.2)' },
-                }}
+                className={`${styles.manageButton} ${isManagingAvailability ? styles.manageButtonActive : styles.manageButtonInactive}`}
               >
                 {isManagingAvailability ? 'Done' : 'Manage Items'}
               </Button>
@@ -150,13 +212,12 @@ const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm])
             <ShoppingCartIcon
               aria-label="Shopping cart"
               onClick={() => router.push('/cart')}
-              style={{ fontSize: 28, cursor: 'pointer', color: '#FFD54F' }}
+              className={styles.cartIcon}
             />
           </Badge>
           <Button
-            sx={{ borderRadius: 3, fontWeight: 'bold' }}
             onClick={handleAccountButton}
-            className="header-action-button"
+            className={`header-action-button ${styles.loginButton}`}
           >
             {isSignedIn ? 'LOGOUT' : 'LOGIN'}
           </Button>
@@ -167,7 +228,7 @@ const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm])
             aria-haspopup="true"
             aria-expanded={accountMenuAnchor ? 'true' : undefined}
             onClick={(event) => setAccountMenuAnchor(event.currentTarget)}
-            sx={{ minWidth: 40, padding: '6px', color: 'white' }}
+            className={styles.accountButton}
           >
             <MenuIcon />
           </Button>
@@ -205,14 +266,68 @@ const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm])
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className="header-category-group">
-          <h3>ORDER SPECIAL ITEMS :</h3>
-          <div className="header-category-links">
-            <Link className="snacks" href="/dosa">DOSA</Link>
-            <Link className="snacks" href="/bonda">BONDA</Link>
-            <Link className="snacks" href="/bajji">BAJJI</Link>
-            <Link className="snacks" href="/vada">VADA</Link>
+        <div className={`header-category-group ${styles.specialCategoryGroup}`}>
+          <div className={styles.specialHeading}>
+            <h3>ORDER SPECIAL ITEMS :</h3>
+            {isShopkeeper && (
+              <button
+                aria-expanded={isEditingSpecialItems}
+                className={styles.specialManageButton}
+                onClick={isEditingSpecialItems ? () => setIsEditingSpecialItems(false) : openSpecialItemsEditor}
+                type="button"
+              >
+                {isEditingSpecialItems ? 'Close' : 'Manage'}
+              </button>
+            )}
           </div>
+          <div className="header-category-links">
+            {visibleSpecialItems.map((product) => (
+              <Link className="snacks" href={`/${product.slug}`} key={product.slug}>
+                {product.title.toUpperCase()}
+              </Link>
+            ))}
+          </div>
+          {isEditingSpecialItems && isShopkeeper && (
+            <section aria-label="Manage header special items" className={styles.specialEditor}>
+              <p className={styles.specialEditorTitle}>Choose up to {MAX_SPECIAL_ITEMS} items</p>
+              <p className={styles.specialEditorCount}>{specialItemsDraft.length}/{MAX_SPECIAL_ITEMS} selected</p>
+              <div className={styles.specialOptions}>
+                {PRODUCTS.map((product) => (
+                  <label className={styles.specialOption} key={product.slug}>
+                    <input
+                      checked={specialItemsDraft.includes(product.slug)}
+                      disabled={!specialItemsDraft.includes(product.slug) && specialItemsDraft.length >= MAX_SPECIAL_ITEMS}
+                      onChange={() => toggleSpecialItem(product.slug)}
+                      type="checkbox"
+                    />
+                    {product.title}
+                  </label>
+                ))}
+              </div>
+              {specialItemsError && <p className={styles.specialError} role="alert">{specialItemsError}</p>}
+              <div className={styles.specialEditorActions}>
+                <button
+                  className={styles.specialCancel}
+                  disabled={isSavingSpecialItems}
+                  onClick={() => setIsEditingSpecialItems(false)}
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  className={styles.specialSave}
+                  disabled={isSavingSpecialItems}
+                  onClick={saveSpecialItems}
+                  type="button"
+                >
+                  {isSavingSpecialItems ? 'Saving…' : 'Save'}
+                </button>
+              </div>
+            </section>
+          )}
+          {!isEditingSpecialItems && specialItemsError && (
+            <span className="header-error" role="alert">{specialItemsError}</span>
+          )}
         </div>
       </div>
     </nav>

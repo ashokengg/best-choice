@@ -1,0 +1,59 @@
+.status {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.available {
+  color: #9cff9c;
+}
+
+.unavailable {
+  color: #ffb3b3;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 18px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.toggleAvailable {
+  background: #245c35;
+}
+
+.toggleUnavailable {
+  background: #555;
+}
+
+.track {
+  display: inline-flex;
+  width: 30px;
+  height: 16px;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  padding: 2px;
+  border-radius: 10px;
+}
+
+.trackAvailable {
+  justify-content: flex-end;
+  background: #8ce99a;
+}
+
+.trackUnavailable {
+  background: #aaa;
+}
+
+.thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+}

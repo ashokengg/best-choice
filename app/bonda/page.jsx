@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import { useAvailability } from '../context/AvailabilityContext';
 import AvailabilityToggle from '../components/AvailabilityToggle';
+import styles from '../productDetail.module.css';
 
 export default function Card() {
   const router = useRouter();
@@ -26,56 +27,29 @@ const card = {
               variants={container}
               initial="hidden"
               animate="show"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '16px',
-                padding: '20px',
-                width: "800px",
-                height: "650px",
-                margin: "auto",
-              }}
+              className={styles.container}
             >
             <motion.div
                       variants={card}
                       whileHover="hover"
-                      className="description"
-                      style={{
-                        background: 'rgba(255,255,255,0.08)',
-                        border: '1px solid rgba(255,255,255,0.15)',
-                        borderRadius: '14px',
-                        padding: '12px',
-                        color: 'whitesmoke',
-                        backdropFilter: 'blur(80px)',display:'flex',flexDirection:'column',alignItems:'center',
-                      }}
+                      className={`description ${styles.card}`}
                     >
-        <img src="/images/bonda.svg" alt="Bonda" style={{ width: "50%",height:'250px',borderRadius: "8px" }} />
-        <h3 style={{background:'purple',borderRadius:'30px',width:'fit-content',margin:'20px',padding:'5px 20px',color:'whitesmoke'}}>BONDA</h3>
+        <img src="/images/bonda.svg" alt="Bonda" className={styles.image} />
+        <h3 className={styles.title}>BONDA</h3>
         <AvailabilityToggle slug="bonda" title="Bonda" />
-       <p style={{fontWeight:'bold'}}>
+       <p className={styles.description}>
         Bonda is a deep-fried South Indian snack, usually round in shape, with a crisp golden exterior and a soft, flavorful filling inside.
       </p>
-      <ul style={{ listStyleType: "disc", paddingLeft: "20px",fontSize:'14PX',marginTop:'10px' }}>
+      <ul className={styles.details}>
         <li>Origin & History: Bonda has roots in South India, with references dating back to the 12th century in the Sanskrit text Manasollasa.It has since evolved into many regional forms</li>
         <li>Ingredients: The classic Aloo Bonda is made with a spiced mashed potato filling, dipped in gram flour batter, and deep-fried until crisp.Other variations use sweet potato, tapioca, paneer, peas, or even pineapple</li>
         <li>Serving Style: Typically served hot with coconut chutney, tomato chutney, or sambar. In Karnataka and Andhra Pradesh, it’s a favorite tea-time snack.</li>
         <li>Texture & Flavor: Crispy outside, soft inside, with a balance of spice and comfort.</li>
       </ul>
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+      <div className={styles.actions}>
        <button 
         onClick={()=> router.push('/')}
-        style={{
-            position: "fixed",
-            bottom: "10px",
-            backgroundColor: "whitesmoke",
-            border: "none",
-            padding: "4px 10px",
-            borderRadius: "10px",
-            cursor: "pointer",
-            color: "black",
-            marginRight: "200px",
-            fontWeight: "bold"
-        }}>
+        className={styles.backButton}>
             Back
         </button>
         <button 
@@ -85,17 +59,7 @@ const card = {
             addToCart({ slug: 'bonda', title: 'Bonda', price: 40, img: '/images/bonda.svg'});
           }
         }}
-        style={{
-            position: "fixed",
-            bottom: "10px",
-            backgroundColor: isAvailable('bonda') ? "yellow" : "#777",
-            border: "none",
-            padding: "4px 20px",
-            borderRadius: "10px",
-            cursor: isAvailable('bonda') ? "pointer" : "not-allowed",
-            color: isAvailable('bonda') ? "black" : "white",
-            fontWeight: "bold",
-        }}>
+        className={styles.addButton}>
             {isAvailable('bonda') ? 'Add To Cart' : 'Not Available'}
         </button>
       </div>

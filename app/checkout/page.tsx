@@ -5,15 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useCart } from '../context/CartContext';
 import { DELIVERY_FEE, SHOP_NAME, SHOP_UPI_ID } from '../config/shop';
-
-const panelStyle: React.CSSProperties = {
-  background: 'rgba(10, 31, 65, 0.93)',
-  border: '1px solid rgba(255,255,255,0.2)',
-  borderRadius: 18,
-  padding: 24,
-  color: 'white',
-  boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
-};
+import styles from './page.module.css';
 
 export default function CheckoutPage() {
   const { cartItems, clearCart } = useCart();
@@ -146,18 +138,18 @@ export default function CheckoutPage() {
 
   if (orderId) {
     return (
-      <main style={{ maxWidth: 760, margin: '36px auto', padding: 20 }}>
-        <section style={{ ...panelStyle, textAlign: 'center' }}>
-          <div style={{ fontSize: 48 }} aria-hidden="true">✓</div>
+      <main className={styles.mainNarrow}>
+        <section className={`${styles.panel} ${styles.centered}`}>
+          <div className={styles.successMark} aria-hidden="true">✓</div>
           <h1>Order Submitted Successfully!</h1>
           <p>Your order ID is <strong>#{orderId}</strong>.</p>
           <p>The shopkeeper will verify your payment and process your order. Your order is saved in your account.</p>
           <p><strong>Payment Verification Pending</strong></p>
-          <p style={{ color: '#ffe082', fontSize: 14 }}>
+          <p className={styles.warning}>
             Payment has not been verified automatically. Keep your order ID for reference.
           </p>
-          <Link href="/orders" style={{ color: '#90caf9' }}>View your order history</Link>
-          <div><Link href="/" style={{ display: 'inline-block', marginTop: 20, color: '#90caf9' }}>Continue shopping</Link></div>
+          <Link href="/orders" className={styles.link}>View your order history</Link>
+          <div><Link href="/" className={styles.continueLink}>Continue shopping</Link></div>
         </section>
       </main>
     );
@@ -165,103 +157,98 @@ export default function CheckoutPage() {
 
   if (cartItems.length === 0) {
     return (
-      <main style={{ maxWidth: 760, margin: '36px auto', padding: 20 }}>
-        <section style={panelStyle}>
+      <main className={styles.mainNarrow}>
+        <section className={styles.panel}>
           <h1>Your cart is empty</h1>
-          <Link href="/" style={{ color: '#90caf9' }}>Browse the menu</Link>
+          <Link href="/" className={styles.link}>Browse the menu</Link>
         </section>
       </main>
     );
   }
 
   return (
-    <main style={{ maxWidth: 980, margin: '28px auto', padding: 16, display: 'grid', gap: 20 }}>
-      <section style={panelStyle}>
-        <div style={{ color: '#ffe082', fontSize: 13, fontWeight: 700 }}>DEMO CHECKOUT · NOT A LIVE PAYMENT</div>
-        <h1 style={{ marginBottom: 8 }}>Checkout & UPI Payment</h1>
-        <p style={{ marginTop: 0, opacity: 0.85 }}>
+    <main className={styles.mainWide}>
+      <section className={styles.panel}>
+        <div className={styles.intro}>DEMO CHECKOUT · NOT A LIVE PAYMENT</div>
+        <h1 className={styles.heading}>Checkout & UPI Payment</h1>
+        <p className={styles.shopDetails}>
           Shop: <strong>{SHOP_NAME}</strong> · Order time: {orderTime || 'Loading…'}
         </p>
-        <p style={{ color: '#ffe082', fontSize: 14 }}>
+        <p className={styles.warning}>
           Demo UPI details are shown. Replace the sample UPI ID in <code>app/config/shop.ts</code> before using this for real orders.
         </p>
       </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 20 }}>
-        <section style={panelStyle}>
+      <div className={styles.checkoutGrid}>
+        <section className={styles.panel}>
           <h2>Order Summary</h2>
           {cartItems.map((item) => (
-            <div key={item.slug} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.18)' }}>
+            <div key={item.slug} className={styles.orderRow}>
               <span>{item.quantity} × {item.title}<br /><small>₹{Number(item.price)} each</small></span>
               <strong>₹{Number(item.price) * item.quantity}</strong>
             </div>
           ))}
-          <p style={{ display: 'flex', justifyContent: 'space-between' }}><span>Items subtotal</span><strong>₹{subtotal}</strong></p>
-          <p style={{ display: 'flex', justifyContent: 'space-between' }}><span>Delivery</span><strong>₹{DELIVERY_FEE}</strong></p>
-          <p style={{ display: 'flex', justifyContent: 'space-between', fontSize: 20, borderTop: '1px solid rgba(255,255,255,0.35)', paddingTop: 12 }}>
+          <p className={styles.summaryLine}><span>Items subtotal</span><strong>₹{subtotal}</strong></p>
+          <p className={styles.summaryLine}><span>Delivery</span><strong>₹{DELIVERY_FEE}</strong></p>
+          <p className={styles.totalLine}>
             <strong>Total</strong><strong>₹{total}</strong>
           </p>
         </section>
 
-        <section style={{ ...panelStyle, textAlign: 'center' }}>
+        <section className={`${styles.panel} ${styles.centered}`}>
           <h2>Pay using UPI</h2>
-          <div style={{ display: 'inline-block', background: 'white', padding: 12, borderRadius: 12 }}>
+          <div className={styles.qrContainer}>
             <QRCodeSVG value={upiUri} size={190} level="M" includeMargin />
           </div>
-          <p style={{ marginBottom: 6 }}>UPI ID</p>
-          <p style={{ fontSize: 20, fontWeight: 700, marginTop: 0, overflowWrap: 'anywhere' }}>{SHOP_UPI_ID}</p>
-          <button type="button" onClick={copyUpiId} style={secondaryButtonStyle}>Copy UPI ID</button>
+          <p className={styles.upiLabel}>UPI ID</p>
+          <p className={styles.upiId}>{SHOP_UPI_ID}</p>
+          <button type="button" onClick={copyUpiId} className={styles.secondaryButton}>Copy UPI ID</button>
           {copyMessage && <p role="status">{copyMessage}</p>}
           <p>
-            <a href={upiUri} style={primaryButtonStyle}>Pay Now</a>
+            <a href={upiUri} className={styles.primaryButton}>Pay Now</a>
           </p>
-          <p style={{ fontSize: 13, opacity: 0.8 }}>Scan with a UPI app, or open your UPI app to pay. Never share your UPI PIN.</p>
+          <p className={styles.safetyNote}>Scan with a UPI app, or open your UPI app to pay. Never share your UPI PIN.</p>
         </section>
       </div>
 
-      <form onSubmit={handleSubmit} style={panelStyle}>
+      <form onSubmit={handleSubmit} className={styles.panel}>
         <h2>Upload Payment Screenshot</h2>
-        <p style={{ color: '#ffe082' }}>Payment Pending · Screenshot is required before order submission.</p>
+        <p className={styles.warningCompact}>Payment Pending · Screenshot is required before order submission.</p>
         {isAuthenticated === false && (
-          <p role="alert">Log in before submitting an order. <Link href="/login" style={{ color: '#90caf9' }}>Log in</Link></p>
+          <p role="alert">Log in before submitting an order. <Link href="/login" className={styles.link}>Log in</Link></p>
         )}
         {accountError && <p role="alert">{accountError}</p>}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 14 }}>
-          <label style={fieldLabelStyle}>
+        <div className={styles.fieldGrid}>
+          <label className={styles.fieldLabel}>
             Customer name *
-            <input required maxLength={100} autoComplete="name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} style={inputStyle} />
+            <input required maxLength={100} autoComplete="name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} className={styles.input} />
           </label>
-          <label style={fieldLabelStyle}>
+          <label className={styles.fieldLabel}>
             Mobile number *
-            <input required type="tel" pattern="\+?[0-9]{10,15}" title="Enter 10 to 15 digits, optionally starting with +" autoComplete="tel" value={mobile} onChange={(event) => setMobile(event.target.value)} style={inputStyle} />
+            <input required type="tel" pattern="\+?[0-9]{10,15}" title="Enter 10 to 15 digits, optionally starting with +" autoComplete="tel" value={mobile} onChange={(event) => setMobile(event.target.value)} className={styles.input} />
           </label>
-          <label style={fieldLabelStyle}>
+          <label className={styles.fieldLabel}>
             Transaction/reference ID *
-            <input required maxLength={100} value={transactionId} onChange={(event) => setTransactionId(event.target.value)} style={inputStyle} />
+            <input required maxLength={100} value={transactionId} onChange={(event) => setTransactionId(event.target.value)} className={styles.input} />
           </label>
         </div>
-        <label style={{ ...fieldLabelStyle, marginTop: 16 }}>
+        <label className={`${styles.fieldLabel} ${styles.fieldLabelSpaced}`}>
           Payment screenshot *
-          <input required type="file" accept="image/*" onChange={(event) => handleScreenshotChange(event.target.files?.[0])} style={{ ...inputStyle, padding: 10 }} />
+          <input required type="file" accept="image/*" onChange={(event) => handleScreenshotChange(event.target.files?.[0])} className={`${styles.input} ${styles.fileInput}`} />
         </label>
-        <p style={{ fontSize: 13, opacity: 0.8 }}>JPEG, PNG, or WebP images up to 5 MB are stored with your order for payment verification.</p>
-        {uploadError && <p role="alert" style={{ color: '#ffcdd2' }}>{uploadError}</p>}
-        {submitError && <p role="alert" style={{ color: '#ffcdd2' }}>{submitError}</p>}
+        <p className={styles.uploadNote}>JPEG, PNG, or WebP images up to 5 MB are stored with your order for payment verification.</p>
+        {uploadError && <p role="alert" className={styles.error}>{uploadError}</p>}
+        {submitError && <p role="alert" className={styles.error}>{submitError}</p>}
         {screenshot && (
-          <div style={{ marginTop: 12 }}>
-            <p style={{ color: '#a5d6a7' }}>Screenshot Uploaded: {screenshot.name}</p>
-            {screenshotUrl && <img src={screenshotUrl} alt="Payment screenshot preview" style={{ maxWidth: 220, maxHeight: 220, objectFit: 'contain', borderRadius: 8, background: 'white' }} />}
+          <div className={styles.uploaded}>
+            <p className={styles.uploadedName}>Screenshot Uploaded: {screenshot.name}</p>
+            {screenshotUrl && <img src={screenshotUrl} alt="Payment screenshot preview" className={styles.preview} />}
           </div>
         )}
-        <button type="submit" disabled={!screenshot || isSubmitting || isAuthenticated !== true} style={{ ...primaryButtonStyle, opacity: screenshot && isAuthenticated && !isSubmitting ? 1 : 0.55, cursor: screenshot && isAuthenticated && !isSubmitting ? 'pointer' : 'not-allowed', marginTop: 18 }}>
+        <button type="submit" disabled={!screenshot || isSubmitting || isAuthenticated !== true} className={`${styles.primaryButton} ${styles.submitButton}`}>
           {isSubmitting ? 'Submitting order...' : 'Submit Order'}
         </button>
       </form>
     </main>
   );
 }
-
-const fieldLabelStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: 7, fontWeight: 600 };
-const inputStyle: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '11px 12px', borderRadius: 8, border: '1px solid #9db8d5', background: '#f8fbff', color: '#10233f' };
-const primaryButtonStyle: React.CSSProperties = { display: 'inline-block', border: 0, borderRadius: 9, padding: '11px 18px', background: '#1976d2', color: 'white', fontWeight: 700, textDecoration: 'none' };
-const secondaryButtonStyle: React.CSSProperties = { border: '1px solid #90caf9', borderRadius: 9, padding: '9px 14px', background: 'transparent', color: 'white', cursor: 'pointer' };

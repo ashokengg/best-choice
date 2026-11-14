@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
+import styles from './page.module.css';
 
 export default function LoginPage() {
   const [input, setInput] = useState("");
@@ -48,44 +49,44 @@ export default function LoginPage() {
 
 
   return (
-    <main style={styles.container}>
-      <h2 style={styles.title}>LOGIN TO TIFFINNEST</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
+    <main className={styles.container}>
+      <h2 className={styles.title}>LOGIN TO TIFFINNEST</h2>
+      <form onSubmit={handleSubmit} className={styles.form}>
       <input
             type="text"
             placeholder="Email or Mobile Number"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            style={styles.input}
+            className={styles.input}
             required
           />
-      {error && <p role="alert" style={{ color: 'red', fontSize: '14px', marginBottom: '8px' }}>{error}</p>}
+      {error && <p role="alert" className={styles.error}>{error}</p>}
         <input
   type="password"
   placeholder="Password"
   value={password}
   onChange={(e) => setPassword(e.target.value)}
-  style={styles.input}
+  className={styles.input}
   required
 />
         <Button
               type="submit"
               variant="contained"
               color="primary"
-              sx={{ mt: 2 ,color:'white',borderRadius:'8px',backgroundColor:'purple',padding:'10px'}}
+              className={styles.submitButton}
               disabled={isLoading || !input || !password}
             >
               {isLoading ? "Logging in..." : "Login"}
             </Button>
 
         {/* Forgot Password link */}
-        <Link href="/forgot-password" style={styles.forgot}>
+        <Link href="/forgot-password" className={styles.forgot}>
           Forgot Password?
         </Link>
 
         {/* Register button */}
-        <Link href="/register" style={{ textDecoration: 'none' }}>
-          <button type="button" style={styles.secondaryButton}>
+        <Link href="/register" className={styles.registerLink}>
+          <button type="button" className={styles.secondaryButton}>
             Register
           </button>
         </Link>
@@ -93,23 +94,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: { maxWidth: 400, margin: '150px auto', padding: 20 },
-  title: {
-    padding: '10px 25px',
-    borderRadius: '20px',
-    background: 'rgba(255, 255, 255, 0.15)',
-    backdropFilter: 'blur(8px)',
-    color: '#fff',
-    fontWeight: 600,
-    marginBottom: '20px',
-    border: '1px solid rgba(255,255,255,0.3)',
-  },
-  form: { display: 'flex', flexDirection: 'column', gap: 12 },
-  input: { padding: '10px', borderRadius: 6, border: '1px solid #ccc', color: 'white', background: 'rgba(255,255,255,0.1)' },
-  button: { padding: '10px', backgroundColor: 'purple', cursor: 'pointer', color: 'white', border: 'none', borderRadius: 6 },
-  secondaryButton: { padding: '5px 8px 5px 8px', cursor: 'pointer', backgroundColor: 'orange', color: 'black', border: 'none', borderRadius: 6 },
-  link: { marginTop: 8, fontSize: 14, color: 'blue', textDecoration: 'underline', cursor: 'pointer' },
-  forgot: { marginTop: 8, fontSize: 14, color: 'white', textDecoration: 'underline', cursor: 'pointer' },
-};
