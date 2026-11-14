@@ -2,11 +2,21 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { ORDER_STATUSES, TEXT } from '../../constants';
 import styles from './page.module.css';
 
 type OrderItem = { slug: string; title: string; price: number; quantity: number };
-type PaymentStatus = 'Payment Verification Pending' | 'Payment Verified' | 'Payment Rejected';
-type OrderStatus = 'Payment Verification Pending' | 'Order Accepted' | 'Preparing' | 'Ready' | 'Completed' | 'Rejected';
+type PaymentStatus =
+  | typeof ORDER_STATUSES.paymentPending
+  | typeof ORDER_STATUSES.paymentVerified
+  | typeof ORDER_STATUSES.paymentRejected;
+type OrderStatus =
+  | typeof ORDER_STATUSES.paymentPending
+  | typeof ORDER_STATUSES.orderAccepted
+  | typeof ORDER_STATUSES.preparing
+  | typeof ORDER_STATUSES.ready
+  | typeof ORDER_STATUSES.completed
+  | typeof ORDER_STATUSES.rejected;
 type ShopOrder = {
   id: string;
   customerName: string;
@@ -38,7 +48,7 @@ export default function ShopkeeperOrdersPage() {
       setForbidden(true);
       return;
     }
-    if (!response.ok) throw new Error(result.error || 'Unable to load orders.');
+    if (!response.ok) throw new Error(result.error || TEXT.api.shopkeeperOrders.loadFailed);
     setOrders(result.orders);
   }, []);
 
@@ -56,11 +66,11 @@ export default function ShopkeeperOrdersPage() {
           setForbidden(true);
           return;
         }
-        if (!response.ok) throw new Error(result.error || 'Unable to load orders.');
+        if (!response.ok) throw new Error(result.error || TEXT.api.shopkeeperOrders.loadFailed);
         setOrders(result.orders);
       })
       .catch((loadError: unknown) => {
-        if (active) setError(loadError instanceof Error ? loadError.message : 'Unable to load orders.');
+        if (active) setError(loadError instanceof Error ? loadError.message : TEXT.api.shopkeeperOrders.loadFailed);
       })
       .finally(() => { if (active) setIsLoading(false); });
     return () => { active = false; };
@@ -76,10 +86,10 @@ export default function ShopkeeperOrdersPage() {
         body: JSON.stringify({ orderId, ...update }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Unable to update order.');
+      if (!response.ok) throw new Error(result.error || TEXT.api.orders.updateFailed);
       await loadOrders();
     } catch (updateError) {
-      setError(updateError instanceof Error ? updateError.message : 'Unable to update order.');
+      setError(updateError instanceof Error ? updateError.message : TEXT.api.orders.updateFailed);
     } finally {
       setUpdatingId('');
     }
@@ -98,22 +108,22 @@ export default function ShopkeeperOrdersPage() {
   );
 
   const orderActions = (order: ShopOrder) => {
-    const verified = order.paymentStatus === 'Payment Verified';
-    const rejected = order.paymentStatus === 'Payment Rejected';
-    const accepted = order.orderStatus === 'Order Accepted';
-    const preparing = order.orderStatus === 'Preparing';
-    const ready = order.orderStatus === 'Ready';
-    const completed = order.orderStatus === 'Completed';
+    const verified = order.paymentStatus === ORDER_STATUSES.paymentVerified;
+    const rejected = order.paymentStatus === ORDER_STATUSES.paymentRejected;
+    const accepted = order.orderStatus === ORDER_STATUSES.orderAccepted;
+    const preparing = order.orderStatus === ORDER_STATUSES.preparing;
+    const ready = order.orderStatus === ORDER_STATUSES.ready;
+    const completed = order.orderStatus === ORDER_STATUSES.completed;
     const updating = updatingId === order.id;
 
     return (
       <div className={styles.actions}>
-        {actionButton('Verify Payment', () => updateOrder(order.id, { paymentStatus: 'Payment Verified' }), updating || verified || rejected)}
-        {actionButton('Reject Payment', () => updateOrder(order.id, { paymentStatus: 'Payment Rejected' }), updating || verified || rejected)}
-        {actionButton('Accept Order', () => updateOrder(order.id, { orderStatus: 'Order Accepted' }), updating || !verified || accepted || preparing || ready || completed || rejected)}
-        {actionButton('Mark Preparing', () => updateOrder(order.id, { orderStatus: 'Preparing' }), updating || !accepted || preparing || ready || completed)}
-        {actionButton('Mark Ready', () => updateOrder(order.id, { orderStatus: 'Ready' }), updating || !preparing || ready || completed)}
-        {actionButton('Complete Order', () => updateOrder(order.id, { orderStatus: 'Completed' }), updating || !ready || completed)}
+        {actionButton(TEXT.shopkeeperOrders.verifyPayment, () => updateOrder(order.id, { paymentStatus: ORDER_STATUSES.paymentVerified }), updating || verified || rejected)}
+        {actionButton(TEXT.shopkeeperOrders.rejectPayment, () => updateOrder(order.id, { paymentStatus: ORDER_STATUSES.paymentRejected }), updating || verified || rejected)}
+        {actionButton(TEXT.shopkeeperOrders.acceptOrder, () => updateOrder(order.id, { orderStatus: ORDER_STATUSES.orderAccepted }), updating || !verified || accepted || preparing || ready || completed || rejected)}
+        {actionButton(TEXT.shopkeeperOrders.markPreparing, () => updateOrder(order.id, { orderStatus: ORDER_STATUSES.preparing }), updating || !accepted || preparing || ready || completed)}
+        {actionButton(TEXT.shopkeeperOrders.markReady, () => updateOrder(order.id, { orderStatus: ORDER_STATUSES.ready }), updating || !preparing || ready || completed)}
+        {actionButton(TEXT.shopkeeperOrders.completeOrder, () => updateOrder(order.id, { orderStatus: ORDER_STATUSES.completed }), updating || !ready || completed)}
       </div>
     );
   };
@@ -121,28 +131,28 @@ export default function ShopkeeperOrdersPage() {
   return (
     <main className={styles.main}>
       <section className={`${styles.panel} ${styles.introPanel}`}>
-        <p className={styles.intro}>SHOPKEEPER ACCESS REQUIRED</p>
-        <h1>Shopkeeper Orders</h1>
-        <p>Only accounts with the shopkeeper role can view customer orders or payment screenshots.</p>
-        <Link href="/checkout" className={styles.link}>Return to checkout</Link>
+        <p className={styles.intro}>{TEXT.shopkeeperOrders.accessRequired}</p>
+        <h1>{TEXT.shopkeeperOrders.heading}</h1>
+        <p>{TEXT.shopkeeperOrders.description}</p>
+        <Link href="/checkout" className={styles.link}>{TEXT.shopkeeperOrders.returnToCheckout}</Link>
       </section>
 
       {needsLogin && (
         <section className={`${styles.panel} ${styles.secondaryPanel}`}>
-          <p>Please log in with a shopkeeper account to continue.</p>
-          <Link href="/login?next=%2Fshopkeeper%2Forders" className={styles.link}>Log in as shopkeeper</Link>
+          <p>{TEXT.shopkeeperOrders.loginPrompt}</p>
+          <Link href="/login?next=%2Fshopkeeper%2Forders" className={styles.link}>{TEXT.common.logInAsShopkeeper}</Link>
         </section>
       )}
       {forbidden && (
         <section className={`${styles.panel} ${styles.secondaryPanel}`}>
-          <p role="alert">This account does not have shopkeeper access. Ask an administrator to assign the shopkeeper role.</p>
+          <p role="alert">{TEXT.shopkeeperOrders.noAccess}</p>
         </section>
       )}
-      {isLoading && <p>Loading orders…</p>}
+      {isLoading && <p>{TEXT.shopkeeperOrders.loading}</p>}
       {error && <p role="alert">{error}</p>}
       {!isLoading && !needsLogin && !forbidden && !error && orders.length === 0 && (
         <section className={`${styles.panel} ${styles.secondaryPanel}`}>
-          <h2>No orders yet</h2>
+          <h2>{TEXT.shopkeeperOrders.empty}</h2>
         </section>
       )}
       {orders.length > 0 && (
@@ -150,19 +160,19 @@ export default function ShopkeeperOrdersPage() {
           {orders.map((order) => (
             <article key={order.id} className={styles.order}>
               <h2>#{order.id}</h2>
-              <p><strong>Customer:</strong> {order.customerName} · {order.mobile}</p>
-              <p><strong>Items:</strong></p>
+              <p><strong>{TEXT.shopkeeperOrders.customer}</strong> {order.customerName} · {order.mobile}</p>
+              <p><strong>{TEXT.common.items}</strong></p>
               <ul>
                 {order.items.map((item) => (
-                  <li key={item.slug}>{item.quantity} × {item.title} — ₹{item.price * item.quantity}</li>
+                  <li key={item.slug}>{item.quantity} × {item.title} — {TEXT.money.symbol}{item.price * item.quantity}</li>
                 ))}
               </ul>
-              <p><strong>Total:</strong> ₹{order.total} · <strong>Payment:</strong> UPI</p>
-              <p><strong>Payment status:</strong> {order.paymentStatus}</p>
-              <p><strong>Order status:</strong> {order.orderStatus}</p>
-              <p><strong>Date/time:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-              <p><strong>Reference ID:</strong> {order.transactionId}</p>
-              <p><strong>Payment screenshot:</strong> <a href={`/api/shopkeeper/orders/${order.id}/screenshot`} target="_blank" rel="noreferrer" className={styles.link}>View screenshot</a></p>
+              <p><strong>{TEXT.common.total}</strong> {TEXT.money.symbol}{order.total} · <strong>{TEXT.common.payment}</strong> {TEXT.checkout.paymentMethod}</p>
+              <p><strong>{TEXT.shopkeeperOrders.paymentStatus}</strong> {order.paymentStatus}</p>
+              <p><strong>{TEXT.shopkeeperOrders.orderStatus}</strong> {order.orderStatus}</p>
+              <p><strong>{TEXT.shopkeeperOrders.dateTime}</strong> {new Date(order.createdAt).toLocaleString()}</p>
+              <p><strong>{TEXT.shopkeeperOrders.reference}</strong> {order.transactionId}</p>
+              <p><strong>{TEXT.shopkeeperOrders.screenshot}</strong> <a href={`/api/shopkeeper/orders/${order.id}/screenshot`} target="_blank" rel="noreferrer" className={styles.link}>{TEXT.shopkeeperOrders.viewScreenshot}</a></p>
               {orderActions(order)}
             </article>
           ))}

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { ORDER_STATUSES, TEXT } from "@/app/constants";
 
 const orderSchema = new Schema(
   {
@@ -18,19 +19,26 @@ const orderSchema = new Schema(
       required: true,
     },
     total: { type: Number, required: true },
-    paymentMethod: { type: String, enum: ["UPI"], default: "UPI" },
+    paymentMethod: { type: String, enum: [TEXT.checkout.paymentMethod], default: TEXT.checkout.paymentMethod },
     screenshot: { type: Buffer, required: true, select: false },
     screenshotContentType: { type: String, required: true, select: false },
     transactionId: { type: String, required: true, trim: true },
     paymentStatus: {
       type: String,
-      enum: ["Payment Verification Pending", "Payment Verified", "Payment Rejected"],
-      default: "Payment Verification Pending",
+      enum: [ORDER_STATUSES.paymentPending, ORDER_STATUSES.paymentVerified, ORDER_STATUSES.paymentRejected],
+      default: ORDER_STATUSES.paymentPending,
     },
     orderStatus: {
       type: String,
-      enum: ["Payment Verification Pending", "Order Accepted", "Preparing", "Ready", "Completed", "Rejected"],
-      default: "Payment Verification Pending",
+      enum: [
+        ORDER_STATUSES.paymentPending,
+        ORDER_STATUSES.orderAccepted,
+        ORDER_STATUSES.preparing,
+        ORDER_STATUSES.ready,
+        ORDER_STATUSES.completed,
+        ORDER_STATUSES.rejected,
+      ],
+      default: ORDER_STATUSES.paymentPending,
     },
   },
   { timestamps: true },

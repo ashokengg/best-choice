@@ -4,6 +4,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongodb";
 import { getMenuAvailability } from "@/lib/menuAvailability";
 import Availability from "@/models/Availability";
+import { TEXT } from "@/app/constants";
 
 export const runtime = "nodejs";
 
@@ -13,26 +14,26 @@ export async function GET() {
     return NextResponse.json({ availability: await getMenuAvailability() });
   } catch (error) {
     console.error("Could not load menu availability:", error);
-    return NextResponse.json({ error: "Unable to load item availability." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.availability.loadFailed }, { status: 500 });
   }
 }
 
 export async function PATCH(request: Request) {
   try {
     const user = await getAuthenticatedUser();
-    if (!user) return NextResponse.json({ error: "Please log in as a shopkeeper." }, { status: 401 });
+    if (!user) return NextResponse.json({ error: TEXT.api.shopkeeperLoginRequired }, { status: 401 });
     if (user.role !== "shopkeeper") {
-      return NextResponse.json({ error: "Shopkeeper access is required." }, { status: 403 });
+      return NextResponse.json({ error: TEXT.api.shopkeeperRequired }, { status: 403 });
     }
 
     let body: unknown;
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.requestJson }, { status: 400 });
     }
     if (!body || typeof body !== "object" || Array.isArray(body)) {
-      return NextResponse.json({ error: "Invalid availability update." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.availability.invalidUpdate }, { status: 400 });
     }
 
     const data = body as Record<string, unknown>;
@@ -41,7 +42,7 @@ export async function PATCH(request: Request) {
       !Object.hasOwn(DEFAULT_AVAILABILITY, data.slug) ||
       typeof data.isAvailable !== "boolean"
     ) {
-      return NextResponse.json({ error: "Invalid item availability." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.availability.invalidItem }, { status: 400 });
     }
 
     await connectToDatabase();
@@ -54,6 +55,6 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ availability: await getMenuAvailability() });
   } catch (error) {
     console.error("Could not update menu availability:", error);
-    return NextResponse.json({ error: "Unable to update item availability." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.availability.updateFailed }, { status: 500 });
   }
 }

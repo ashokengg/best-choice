@@ -5,50 +5,32 @@ import { useAvailability } from '../context/AvailabilityContext';
 import AvailabilityToggle from '../components/AvailabilityToggle';
 import FavoriteButton from '../components/FavoriteButton';
 import CartQuantityControl from '../components/CartQuantityControl';
+import { VADA_PRODUCTS } from '../config/products';
+import { TEXT } from '../constants';
 import styles from './page.module.css';
-
-const vadaTypes = [
-  {
-    slug: 'medu-vada',
-    title: 'Medu Vada',
-    description: 'A golden lentil doughnut with a crisp outside and soft center.',
-    image: '/images/medu-vada.svg',
-  },
-  {
-    slug: 'masala-vada',
-    title: 'Masala Vada',
-    description: 'A crunchy chana dal patty seasoned with aromatic spices.',
-    image: '/images/masala-vada.svg',
-  },
-];
 
 export default function VadaPage() {
   const { isAvailable } = useAvailability();
   return (
     <main className={styles.main}>
-      <h1 className={styles.title}>Choose Your Vada</h1>
+      <h1 className={styles.title}>{TEXT.product.chooseVada}</h1>
       <div className={styles.grid}>
-        {vadaTypes.map((vada) => (
+        {VADA_PRODUCTS.map((vada) => (
           <article key={vada.slug} className={styles.card}>
             <FavoriteButton className="favorite-button--card" slug={vada.slug} title={vada.title} />
             <img
-              src={vada.image}
+              src={vada.img}
               alt={vada.title}
               className={styles.image}
             />
             <h2>{vada.title}</h2>
-            <p>{vada.description}</p>
+            <p>{vada.description ?? vada.tagline}</p>
             <AvailabilityToggle slug={vada.slug} title={vada.title} />
-            <p>₹30 {isAvailable(vada.slug) ? '' : '· Not available'}</p>
+            <p>{TEXT.money.symbol}{vada.price} {isAvailable(vada.slug) ? '' : TEXT.product.notAvailableSuffix}</p>
             <div className={styles.actions}>
-              <CartQuantityControl item={{
-                slug: vada.slug,
-                title: vada.title,
-                price: 30,
-                img: vada.image,
-              }} />
+              <CartQuantityControl item={vada} />
               <Link href={`/${vada.slug}`} className={styles.details}>
-                View details
+                {TEXT.product.viewDetails}
               </Link>
             </div>
           </article>

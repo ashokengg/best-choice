@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
+import { TEXT } from '../constants';
 import styles from './page.module.css';
 
 export default function LoginPage() {
@@ -23,7 +24,7 @@ export default function LoginPage() {
     setError("");
     try {
       if (!isValidInput) {
-        setError("Please enter a valid email or mobile number");
+        setError(TEXT.auth.invalidLoginInput);
         return;
       }
 
@@ -34,13 +35,13 @@ export default function LoginPage() {
       });
       const result = await response.json();
       if (!response.ok) {
-        setError(result.error || "Unable to log in. Please try again.");
+        setError(result.error || TEXT.auth.unableToLogin);
         return;
       }
       const requestedPath = new URLSearchParams(window.location.search).get("next");
       router.push(requestedPath === "/shopkeeper/orders" ? requestedPath : "/");
     } catch {
-      setError("Could not reach the server. Please try again.");
+      setError(TEXT.auth.serverUnavailable);
     } finally {
       setIsLoading(false);
     }
@@ -50,11 +51,11 @@ export default function LoginPage() {
 
   return (
     <main className={styles.container}>
-      <h2 className={styles.title}>LOGIN TO TIFFINNEST</h2>
+      <h2 className={styles.title}>{TEXT.auth.loginTitle}</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
       <input
             type="text"
-            placeholder="Email or Mobile Number"
+            placeholder={TEXT.auth.emailOrMobile}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className={styles.input}
@@ -63,7 +64,7 @@ export default function LoginPage() {
       {error && <p role="alert" className={styles.error}>{error}</p>}
         <input
   type="password"
-  placeholder="Password"
+  placeholder={TEXT.auth.password}
   value={password}
   onChange={(e) => setPassword(e.target.value)}
   className={styles.input}
@@ -76,18 +77,18 @@ export default function LoginPage() {
               className={styles.submitButton}
               disabled={isLoading || !input || !password}
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? TEXT.auth.loggingIn : TEXT.auth.login}
             </Button>
 
         {/* Forgot Password link */}
         <Link href="/forgot-password" className={styles.forgot}>
-          Forgot Password?
+          {TEXT.auth.forgotPassword}
         </Link>
 
         {/* Register button */}
         <Link href="/register" className={styles.registerLink}>
           <button type="button" className={styles.secondaryButton}>
-            Register
+            {TEXT.auth.register}
           </button>
         </Link>
       </form>

@@ -4,6 +4,7 @@ import { DEFAULT_SPECIAL_ITEMS, MAX_SPECIAL_ITEMS } from "@/app/config/specialIt
 import { getAuthenticatedUser } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongodb";
 import SpecialItems from "@/models/SpecialItems";
+import { TEXT } from "@/app/constants";
 
 export const runtime = "nodejs";
 
@@ -27,7 +28,7 @@ export async function GET() {
     return NextResponse.json({ items: await getSpecialItems() });
   } catch (error) {
     console.error("Could not load header special items:", error);
-    return NextResponse.json({ error: "Unable to load header special items." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.specialItems.loadFailed }, { status: 500 });
   }
 }
 
@@ -35,20 +36,20 @@ export async function PUT(request: Request) {
   try {
     const user = await getAuthenticatedUser();
     if (!user) {
-      return NextResponse.json({ error: "Please log in as a shopkeeper." }, { status: 401 });
+      return NextResponse.json({ error: TEXT.api.shopkeeperLoginRequired }, { status: 401 });
     }
     if (user.role !== "shopkeeper") {
-      return NextResponse.json({ error: "Shopkeeper access is required." }, { status: 403 });
+      return NextResponse.json({ error: TEXT.api.shopkeeperRequired }, { status: 403 });
     }
 
     let body: unknown;
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.requestJson }, { status: 400 });
     }
     if (!body || typeof body !== "object" || Array.isArray(body) || !Array.isArray((body as Record<string, unknown>).items)) {
-      return NextResponse.json({ error: "Provide a list of special item slugs." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.specialItems.invalidList }, { status: 400 });
     }
 
     const items: unknown[] = (body as { items: unknown[] }).items;
@@ -58,7 +59,7 @@ export async function PUT(request: Request) {
       new Set(items).size !== items.length
     ) {
       return NextResponse.json(
-        { error: `Select up to ${MAX_SPECIAL_ITEMS} different menu items.` },
+        { error: TEXT.api.specialItems.invalidSelection(MAX_SPECIAL_ITEMS) },
         { status: 400 },
       );
     }
@@ -73,6 +74,6 @@ export async function PUT(request: Request) {
     return NextResponse.json({ items: await getSpecialItems() });
   } catch (error) {
     console.error("Could not save header special items:", error);
-    return NextResponse.json({ error: "Unable to save header special items." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.specialItems.saveFailed }, { status: 500 });
   }
 }

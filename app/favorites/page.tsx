@@ -7,6 +7,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import { useAvailability } from '../context/AvailabilityContext';
 import { MENU_PRODUCTS } from '../config/products';
 import CartQuantityControl from '../components/CartQuantityControl';
+import { TEXT } from '../constants';
 
 export default function FavoritesPage() {
   const { favoriteSlugs } = useFavorites();
@@ -15,10 +16,10 @@ export default function FavoritesPage() {
 
   return (
     <main className="favorites-page">
-      <h1>My Favourites</h1>
+      <h1>{TEXT.favorites.heading}</h1>
       {favoriteProducts.length === 0 ? (
         <p className="favorites-empty">
-          You haven’t added any favourites yet. Select the heart on any menu item to save it here.
+          {TEXT.favorites.empty}
         </p>
       ) : (
         <div className="favorites-grid">
@@ -31,12 +32,12 @@ export default function FavoritesPage() {
                 <h2>{item.title}</h2>
                 <p>{item.tagline}</p>
                 <span className={available ? 'favorite-availability' : 'favorite-availability unavailable'}>
-                  {available ? 'Available' : 'Not Available'}
+                  {available ? TEXT.favorites.available : TEXT.favorites.notAvailable}
                 </span>
                 <div className="favorite-product-actions">
-                  <strong>₹{item.price}</strong>
+                  <strong>{TEXT.money.symbol}{item.price}</strong>
                   <CartQuantityControl item={item} />
-                  <Link href={`/${item.slug}`}>Details</Link>
+                  <Link href={`/${item.slug}`}>{TEXT.common.details}</Link>
                 </div>
               </article>
             );

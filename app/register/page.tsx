@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { TEXT } from '../constants';
 import styles from './page.module.css';
 
 export default function RegisterPage() {
@@ -29,14 +30,14 @@ export default function RegisterPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        setError(result.error || 'Unable to register. Please try again.');
+        setError(result.error || TEXT.auth.unableToRegister);
         return;
       }
 
-      setSuccess('Your account was created. You can now log in.');
+      setSuccess(TEXT.auth.accountCreated);
       setPassword('');
     } catch {
-      setError('Could not reach the server. Please try again.');
+      setError(TEXT.auth.serverUnavailable);
     } finally {
       setIsLoading(false);
     }
@@ -44,11 +45,11 @@ export default function RegisterPage() {
 
   return (
     <main className={styles.container}>
-      <h2 className={styles.title}>REGISTER TO TIFFINNEST</h2>
+      <h2 className={styles.title}>{TEXT.auth.registerTitle}</h2>
       <form onSubmit={handleRegister} className={styles.form}>
         <input
           type="text"
-          placeholder="Full Name"
+          placeholder={TEXT.auth.fullName}
           value={name}
           onChange={(e) => setName(e.target.value)}
           className={styles.input}
@@ -56,7 +57,7 @@ export default function RegisterPage() {
         />
         <input
           type="tel"
-          placeholder="Mobile Number"
+          placeholder={TEXT.auth.mobileNumber}
           value={tel}
           onChange={(e) => setTel(e.target.value)}
           className={styles.input}
@@ -65,7 +66,7 @@ export default function RegisterPage() {
         />
         <input
           type="email"
-          placeholder="Email"
+          placeholder={TEXT.auth.email}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={styles.input}
@@ -73,7 +74,7 @@ export default function RegisterPage() {
         />
         <input
           type="password"
-          placeholder="Create Password"
+          placeholder={TEXT.auth.createPassword}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className={styles.input}
@@ -83,9 +84,9 @@ export default function RegisterPage() {
         {error && <p role="alert" className={styles.error}>{error}</p>}
         {success && <p role="status" className={styles.success}>{success}</p>}
         <button type="submit" className={styles.button} disabled={isLoading}>
-          {isLoading ? 'Creating account...' : 'Submit'}
+          {isLoading ? TEXT.auth.creatingAccount : TEXT.auth.submit}
         </button>
-        <button type="button" onClick={()=>router.push('/login')} className={styles.loginButton}>Back To Login</button>
+        <button type="button" onClick={()=>router.push('/login')} className={styles.loginButton}>{TEXT.auth.backToLogin}</button>
       </form>
     </main>
   );

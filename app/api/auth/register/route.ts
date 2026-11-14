@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
+import { TEXT } from "@/app/constants";
 
 export const runtime = "nodejs";
 
@@ -10,11 +11,11 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return NextResponse.json({ error: TEXT.api.requestJson }, { status: 400 });
   }
 
   if (!body || typeof body !== "object" || Array.isArray(body)) {
-    return NextResponse.json({ error: "Invalid registration details." }, { status: 400 });
+    return NextResponse.json({ error: TEXT.api.register.invalidDetails }, { status: 400 });
   }
 
   const data = body as Record<string, unknown>;
@@ -24,17 +25,17 @@ export async function POST(request: Request) {
   const password = typeof data.password === "string" ? data.password : "";
 
   if (!name || name.length > 100) {
-    return NextResponse.json({ error: "Enter a name of 1 to 100 characters." }, { status: 400 });
+    return NextResponse.json({ error: TEXT.api.register.name }, { status: 400 });
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+    return NextResponse.json({ error: TEXT.api.register.email }, { status: 400 });
   }
   if (!/^[6-9]\d{9}$/.test(phone)) {
-    return NextResponse.json({ error: "Enter a valid 10-digit mobile number." }, { status: 400 });
+    return NextResponse.json({ error: TEXT.api.register.mobile }, { status: 400 });
   }
   if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
     return NextResponse.json(
-      { error: "Password must be 8+ characters and include uppercase, lowercase, number, and special character." },
+      { error: TEXT.api.register.password },
       { status: 400 },
     );
   }
@@ -57,14 +58,14 @@ export async function POST(request: Request) {
       error.code === 11000
     ) {
       return NextResponse.json(
-        { error: "An account with that email or mobile number already exists." },
+        { error: TEXT.api.register.duplicate },
         { status: 409 },
       );
     }
 
     console.error("User registration failed:", error);
     return NextResponse.json(
-      { error: "Unable to create your account right now. Please try again." },
+      { error: TEXT.api.register.failed },
       { status: 500 },
     );
   }

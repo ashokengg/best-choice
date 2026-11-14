@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { DEFAULT_AVAILABILITY } from '../config/availability';
+import { TEXT } from '../constants';
 
 type AvailabilityContextType = {
   isAvailable: (slug: string) => boolean;
@@ -42,11 +43,11 @@ export function AvailabilityProvider({ children }: { children: React.ReactNode }
         body: JSON.stringify({ slug, isAvailable: !availability[slug] }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Could not update availability.');
+      if (!response.ok) throw new Error(result.error || TEXT.availability.updateError);
       setAvailability({ ...DEFAULT_AVAILABILITY, ...result.availability });
     } catch (error) {
       console.error('Could not update item availability.', error);
-      setAvailabilityError(error instanceof Error ? error.message : 'Could not update item availability.');
+      setAvailabilityError(error instanceof Error ? error.message : TEXT.availability.updateFallback);
     }
   }, [availability]);
 
@@ -61,17 +62,17 @@ export function AvailabilityProvider({ children }: { children: React.ReactNode }
       const response = await fetch('/api/auth/me');
       const result = await response.json();
       if (response.status === 401) {
-        setAvailabilityError('Log in with a shopkeeper account to manage items.');
+        setAvailabilityError(TEXT.availability.loginToManage);
         return;
       }
       if (response.status === 403 || (response.ok && result.user?.role !== 'shopkeeper')) {
-        setAvailabilityError('Shopkeeper access is required to manage items.');
+        setAvailabilityError(TEXT.availability.accessRequiredToManage);
         return;
       }
-      if (!response.ok) throw new Error(result.error || 'Could not verify shopkeeper access.');
+      if (!response.ok) throw new Error(result.error || TEXT.availability.verifyAccess);
       setIsManagingAvailability(true);
     } catch (error) {
-      setAvailabilityError(error instanceof Error ? error.message : 'Could not verify shopkeeper access.');
+      setAvailabilityError(error instanceof Error ? error.message : TEXT.availability.verifyAccess);
     }
   }, [isManagingAvailability]);
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useAvailability } from '../context/AvailabilityContext';
+import { TEXT } from '../constants';
 import styles from './AvailabilityToggle.module.css';
 
 export default function AvailabilityToggle({ slug, title }: { slug: string; title: string }) {
@@ -12,7 +13,7 @@ export default function AvailabilityToggle({ slug, title }: { slug: string; titl
       <span
         className={`${styles.status} ${available ? styles.available : styles.unavailable}`}
       >
-        {available ? 'Available' : 'Not Available'}
+        {available ? TEXT.common.available : TEXT.common.notAvailable}
       </span>
     );
   }
@@ -22,7 +23,7 @@ export default function AvailabilityToggle({ slug, title }: { slug: string; titl
       type="button"
       role="switch"
       aria-checked={available}
-      aria-label={`${title} availability`}
+      aria-label={TEXT.availability.label(title)}
       onClick={() => toggleAvailability(slug)}
       className={`${styles.toggle} ${available ? styles.toggleAvailable : styles.toggleUnavailable}`}
     >
@@ -32,7 +33,7 @@ export default function AvailabilityToggle({ slug, title }: { slug: string; titl
       >
         <span className={styles.thumb} />
       </span>
-      {available ? 'Available' : 'Not Available'}
+      {available ? TEXT.common.available : TEXT.common.notAvailable}
     </button>
   );
 }

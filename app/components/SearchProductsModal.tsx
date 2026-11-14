@@ -7,6 +7,7 @@ import { MENU_PRODUCTS } from '../config/products';
 import AvailabilityToggle from './AvailabilityToggle';
 import FavoriteButton from './FavoriteButton';
 import CartQuantityControl from './CartQuantityControl';
+import { TEXT } from '../constants';
 
 type SearchProductsModalProps = {
   searchTerm: string;
@@ -49,11 +50,11 @@ export default function SearchProductsModal({ searchTerm, onClose }: SearchProdu
       >
         <div className="search-products-heading">
           <div>
-            <h2 id="search-products-title">Menu items</h2>
-            <p>Results for “{searchTerm.trim()}”</p>
+            <h2 id="search-products-title">{TEXT.search.menuItems}</h2>
+            <p>{TEXT.search.results(searchTerm.trim())}</p>
           </div>
           <button
-            aria-label="Close search results"
+            aria-label={TEXT.search.close}
             className="search-products-close"
             onClick={onClose}
             type="button"
@@ -73,10 +74,10 @@ export default function SearchProductsModal({ searchTerm, onClose }: SearchProdu
                   <AvailabilityToggle slug={item.slug} title={item.title} />
                 </div>
                 <div className="search-product-actions">
-                  <span className="search-product-price">₹{item.price}</span>
+                  <span className="search-product-price">{TEXT.money.symbol}{item.price}</span>
                   <CartQuantityControl item={item} />
                   <Link href={`/${item.slug}`} onClick={onClose}>
-                    Details
+                    {TEXT.common.details}
                   </Link>
                 </div>
               </article>
@@ -84,7 +85,7 @@ export default function SearchProductsModal({ searchTerm, onClose }: SearchProdu
           })}
           {results.length === 0 && (
             <p className="search-products-empty" role="status">
-              No menu items match “{searchTerm.trim()}”.
+              {TEXT.search.noResults(searchTerm.trim())}
             </p>
           )}
         </div>

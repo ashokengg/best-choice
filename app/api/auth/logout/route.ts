@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { TEXT } from "@/app/constants";
 import { hashSessionToken, SESSION_COOKIE } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongodb";
 import Session from "@/models/Session";
@@ -19,6 +20,6 @@ export async function POST() {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("User logout failed:", error);
-    return NextResponse.json({ error: "Unable to log out right now." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.login.logoutFailed }, { status: 500 });
   }
 }

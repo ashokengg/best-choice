@@ -8,6 +8,7 @@ import { AvailabilityProvider } from "./context/AvailabilityContext";
 import { SearchProvider } from "./components/searchBar";
 import type { ReactNode } from "react";
 import styles from "./layout.module.css";
+import { TEXT } from "./constants";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -19,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TiffinNest",
-  description: "Fresh, delicious tiffin favorites from TiffinNest.",
+  title: TEXT.app.name,
+  description: TEXT.app.description,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

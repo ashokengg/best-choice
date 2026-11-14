@@ -10,6 +10,7 @@ import AvailabilityToggle from './components/AvailabilityToggle';
 import { MENU_PRODUCTS } from './config/products';
 import FavoriteButton from './components/FavoriteButton';
 import CartQuantityControl from './components/CartQuantityControl';
+import { TEXT } from './constants';
 import styles from './page.module.css';
 
 const items = MENU_PRODUCTS;
@@ -62,9 +63,11 @@ export default function SnackCards() {
           </div>
 
           <div className={styles.actions}>
-            <span className={styles.price}>₹{item.price}</span>
-              <CartQuantityControl item={item} />
-              <Link aria-label={`More information about ${item.title}`} className={styles.infoLink} href={`/${item.slug}`}>
+            <span className={styles.price}>{TEXT.money.symbol}{item.price}</span>
+              <div className={styles.quantityControl}>
+                <CartQuantityControl item={item} />
+              </div>
+              <Link aria-label={TEXT.home.productInfo(item.title)} className={styles.infoLink} href={`/${item.slug}`}>
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 className={styles.infoButton}

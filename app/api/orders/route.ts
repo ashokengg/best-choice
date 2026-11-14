@@ -5,13 +5,14 @@ import { PRODUCTS_BY_SLUG } from "@/app/config/products";
 import { connectToDatabase } from "@/lib/mongodb";
 import { getMenuAvailability } from "@/lib/menuAvailability";
 import Order from "@/models/Order";
+import { TEXT } from "@/app/constants";
 
 export const runtime = "nodejs";
 
 export async function GET() {
   try {
     const user = await getAuthenticatedUser();
-    if (!user) return NextResponse.json({ error: "Please log in." }, { status: 401 });
+    if (!user) return NextResponse.json({ error: TEXT.api.loginRequired }, { status: 401 });
 
     await connectToDatabase();
     const orders = await Order.find({ userId: user.id })
@@ -32,7 +33,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Could not load order history:", error);
-    return NextResponse.json({ error: "Unable to load order history." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.orders.loadFailed }, { status: 500 });
   }
 }
 
@@ -41,12 +42,12 @@ export async function POST(request: Request) {
   try {
     form = await request.formData();
   } catch {
-    return NextResponse.json({ error: "Invalid order submission." }, { status: 400 });
+    return NextResponse.json({ error: TEXT.api.orders.invalidSubmission }, { status: 400 });
   }
 
   try {
     const user = await getAuthenticatedUser();
-    if (!user) return NextResponse.json({ error: "Please log in before ordering." }, { status: 401 });
+    if (!user) return NextResponse.json({ error: TEXT.api.orders.loginBeforeOrder }, { status: 401 });
 
     const customerName = String(form.get("customerName") || "").trim();
     const mobile = String(form.get("mobile") || "").trim();
@@ -56,16 +57,16 @@ export async function POST(request: Request) {
     try {
       rawItems = JSON.parse(String(form.get("items") || ""));
     } catch {
-      return NextResponse.json({ error: "Invalid order items." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.orders.invalidItems }, { status: 400 });
     }
 
     if (!customerName || customerName.length > 100 || !/^\+?[0-9]{10,15}$/.test(mobile) ||
       !transactionId || transactionId.length > 100 || !(image instanceof File) ||
       !["image/jpeg", "image/png", "image/webp"].includes(image.type) || image.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "Check your contact, payment, and screenshot details." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.orders.invalidContact }, { status: 400 });
     }
     if (!Array.isArray(rawItems) || rawItems.length < 1 || rawItems.length > 30) {
-      return NextResponse.json({ error: "Your cart is empty or has too many items." }, { status: 400 });
+      return NextResponse.json({ error: TEXT.api.orders.emptyOrTooMany }, { status: 400 });
     }
 
     const items = [];
@@ -73,16 +74,16 @@ export async function POST(request: Request) {
     const availability = await getMenuAvailability();
     for (const rawItem of rawItems) {
       if (!rawItem || typeof rawItem !== "object") {
-        return NextResponse.json({ error: "Invalid item in order." }, { status: 400 });
+        return NextResponse.json({ error: TEXT.api.orders.invalidItem }, { status: 400 });
       }
       const item = rawItem as Record<string, unknown>;
       const product = typeof item.slug === "string" ? PRODUCTS_BY_SLUG[item.slug] : undefined;
       const quantity = item.quantity;
       if (!product || !Number.isInteger(quantity) || Number(quantity) < 1 || Number(quantity) > 99) {
-        return NextResponse.json({ error: "Invalid product or quantity in order." }, { status: 400 });
+        return NextResponse.json({ error: TEXT.api.orders.invalidProductQuantity }, { status: 400 });
       }
       if (!availability[item.slug as string]) {
-        return NextResponse.json({ error: `${product.title} is not currently available.` }, { status: 409 });
+        return NextResponse.json({ error: TEXT.api.orders.unavailable(product.title) }, { status: 409 });
       }
       items.push({
         slug: product.slug,
@@ -108,6 +109,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ orderId: String(order._id), total }, { status: 201 });
   } catch (error) {
     console.error("Order creation failed:", error);
-    return NextResponse.json({ error: "Unable to submit your order right now." }, { status: 500 });
+    return NextResponse.json({ error: TEXT.api.orders.submitFailed }, { status: 500 });
   }
 }

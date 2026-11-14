@@ -16,6 +16,7 @@ import { useSearch } from './components/searchBar';
 import SearchProductsModal from './components/SearchProductsModal';
 import { PRODUCTS } from './config/products';
 import { DEFAULT_SPECIAL_ITEMS, MAX_SPECIAL_ITEMS } from './config/specialItems';
+import { TEXT } from './constants';
 import styles from './Header.module.css';
 
 function Header() { 
@@ -58,7 +59,7 @@ const visibleSpecialItems = specialItems
             return;
           }
           const result = await response.json();
-          if (!response.ok) throw new Error(result.error || 'Could not check your account.');
+          if (!response.ok) throw new Error(result.error || TEXT.checkout.accountError);
           if (active) {
             setIsSignedIn(true);
             setIsShopkeeper(result.user?.role === 'shopkeeper');
@@ -71,7 +72,7 @@ const visibleSpecialItems = specialItems
         console.error('Could not check signed-in status.', error);
         if (active) {
           setIsShopkeeper(false);
-          setAuthError('Account status is unavailable.');
+          setAuthError(TEXT.header.accountUnavailable);
         }
       });
     return () => { active = false; };
@@ -82,11 +83,11 @@ const visibleSpecialItems = specialItems
     fetch('/api/special-items')
       .then(async (response) => {
         const result = await response.json();
-        if (!response.ok) throw new Error(result.error || 'Could not load special items.');
+        if (!response.ok) throw new Error(result.error || TEXT.header.loadSpecialItemsError);
         if (!Array.isArray(result.items) || !result.items.every((slug: unknown) =>
           typeof slug === 'string' && PRODUCTS.some((product) => product.slug === slug),
         )) {
-          throw new Error('The saved special items are invalid.');
+          throw new Error(TEXT.header.invalidSavedSpecialItems);
         }
         if (active) {
           setSpecialItems(result.items);
@@ -95,7 +96,7 @@ const visibleSpecialItems = specialItems
       })
       .catch((error: unknown) => {
         console.error('Could not load header special items.', error);
-        if (active) setSpecialItemsError(error instanceof Error ? error.message : 'Could not load special items.');
+        if (active) setSpecialItemsError(error instanceof Error ? error.message : TEXT.header.loadSpecialItemsError);
       });
     return () => { active = false; };
   }, []);
@@ -109,7 +110,7 @@ const visibleSpecialItems = specialItems
     try {
       const response = await fetch('/api/auth/logout', { method: 'POST' });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Could not log out.');
+      if (!response.ok) throw new Error(result.error || TEXT.header.logoutError);
       setIsSignedIn(false);
       setIsShopkeeper(false);
       setUserName('');
@@ -118,7 +119,7 @@ const visibleSpecialItems = specialItems
       setAccountMenuAnchor(null);
       router.push('/login');
     } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Could not log out.');
+      setAuthError(error instanceof Error ? error.message : TEXT.header.logoutError);
     }
   };
 
@@ -153,13 +154,13 @@ const visibleSpecialItems = specialItems
         body: JSON.stringify({ items: specialItemsDraft }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Could not save special items.');
-      if (!Array.isArray(result.items)) throw new Error('The server returned an invalid special items list.');
+      if (!response.ok) throw new Error(result.error || TEXT.header.saveSpecialItemsError);
+      if (!Array.isArray(result.items)) throw new Error(TEXT.header.invalidServerSpecialItems);
       setSpecialItems(result.items);
       setIsEditingSpecialItems(false);
     } catch (error) {
       console.error('Could not save header special items.', error);
-      setSpecialItemsError(error instanceof Error ? error.message : 'Could not save special items.');
+      setSpecialItemsError(error instanceof Error ? error.message : TEXT.header.saveSpecialItemsError);
     } finally {
       setIsSavingSpecialItems(false);
     }
@@ -171,10 +172,10 @@ const visibleSpecialItems = specialItems
       <div className="header-main">
         <div className="header-brand">
           <div className="header-logo-group">
-            <Link href="/" className="header-logo-link" aria-label="TiffinNest home">
+            <Link href="/" className="header-logo-link" aria-label={TEXT.header.homeAria}>
               <Image
                 src="/images/TiffinNest_logo6.svg.png"
-                alt="TiffinNest — Good Food. Closer to You."
+                alt={TEXT.header.logoAlt}
                 width={440}
                 height={220}
                 quality={100}
@@ -185,14 +186,14 @@ const visibleSpecialItems = specialItems
             </Link>
           </div>
           <div className="header-welcome">
-            <span>LALITHA</span>
-            <span>HOME FOODS</span>
+            <span>{TEXT.header.brand}</span>
+            <span>{TEXT.header.brandSubtitle}</span>
           </div>
         </div>
         <div className="header-actions">
-          <Link aria-label={`Favourites, ${favoriteCount} saved`} className="header-favorites-link" href="/favorites">
+          <Link aria-label={TEXT.header.favoritesAria(favoriteCount)} className="header-favorites-link" href="/favorites">
             <FavoriteBorderIcon aria-hidden="true" />
-            <span>Favourites</span>
+            <span>{TEXT.header.favorites}</span>
             {favoriteCount > 0 && <span className="header-favorites-count">{favoriteCount}</span>}
           </Link>
           {isShopkeeper && (
@@ -203,14 +204,14 @@ const visibleSpecialItems = specialItems
                 onClick={handleManageItemsClick}
                 className={`${styles.manageButton} ${isManagingAvailability ? styles.manageButtonActive : styles.manageButtonInactive}`}
               >
-                {isManagingAvailability ? 'Done' : 'Manage Items'}
+                {isManagingAvailability ? TEXT.header.done : TEXT.header.manageItems}
               </Button>
             </div>
           )}
           {availabilityError && <span role="alert" className="header-error">{availabilityError}</span>}
           <Badge badgeContent={cartCount} color="secondary">
             <ShoppingCartIcon
-              aria-label="Shopping cart"
+              aria-label={TEXT.header.shoppingCartAria}
               onClick={() => router.push('/cart')}
               className={styles.cartIcon}
             />
@@ -219,11 +220,11 @@ const visibleSpecialItems = specialItems
             onClick={handleAccountButton}
             className={`header-action-button ${styles.loginButton}`}
           >
-            {isSignedIn ? 'LOGOUT' : 'LOGIN'}
+            {isSignedIn ? TEXT.header.logout : TEXT.header.login}
           </Button>
           <Button
             type="button"
-            aria-label="Open account menu"
+            aria-label={TEXT.header.accountMenu}
             aria-controls={accountMenuAnchor ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={accountMenuAnchor ? 'true' : undefined}
@@ -241,7 +242,7 @@ const visibleSpecialItems = specialItems
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
             <div className="account-menu-customer">
-              <strong>{isSignedIn ? userName || 'Customer' : 'Guest'}</strong>
+              <strong>{isSignedIn ? userName || TEXT.header.customer : TEXT.header.guest}</strong>
               {userEmail && <span>{userEmail}</span>}
               {userPhone && <span>{userPhone}</span>}
             </div>
@@ -251,7 +252,7 @@ const visibleSpecialItems = specialItems
                 router.push('/orders');
               }}
             >
-              Order History
+              {TEXT.header.orderHistory}
             </MenuItem>
           </Menu>
           {authError && <span role="alert" className="header-error">{authError}</span>}
@@ -261,14 +262,14 @@ const visibleSpecialItems = specialItems
         <input
           type="text"
           spellCheck={false}
-          placeholder="Search your favorite food..."
+          placeholder={TEXT.header.searchPlaceholder}
           className="search-input header-category-search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <div className={`header-category-group ${styles.specialCategoryGroup}`}>
           <div className={styles.specialHeading}>
-            <h3>ORDER SPECIAL ITEMS :</h3>
+            <h3>{TEXT.header.specialItemsHeading}</h3>
             {isShopkeeper && (
               <button
                 aria-expanded={isEditingSpecialItems}
@@ -276,7 +277,7 @@ const visibleSpecialItems = specialItems
                 onClick={isEditingSpecialItems ? () => setIsEditingSpecialItems(false) : openSpecialItemsEditor}
                 type="button"
               >
-                {isEditingSpecialItems ? 'Close' : 'Manage'}
+                {isEditingSpecialItems ? TEXT.header.close : TEXT.header.manage}
               </button>
             )}
           </div>
@@ -288,9 +289,9 @@ const visibleSpecialItems = specialItems
             ))}
           </div>
           {isEditingSpecialItems && isShopkeeper && (
-            <section aria-label="Manage header special items" className={styles.specialEditor}>
-              <p className={styles.specialEditorTitle}>Choose up to {MAX_SPECIAL_ITEMS} items</p>
-              <p className={styles.specialEditorCount}>{specialItemsDraft.length}/{MAX_SPECIAL_ITEMS} selected</p>
+            <section aria-label={TEXT.header.specialEditorAria} className={styles.specialEditor}>
+              <p className={styles.specialEditorTitle}>{TEXT.header.chooseSpecialItems(MAX_SPECIAL_ITEMS)}</p>
+              <p className={styles.specialEditorCount}>{TEXT.header.selectedSpecialItems(specialItemsDraft.length, MAX_SPECIAL_ITEMS)}</p>
               <div className={styles.specialOptions}>
                 {PRODUCTS.map((product) => (
                   <label className={styles.specialOption} key={product.slug}>
@@ -312,7 +313,7 @@ const visibleSpecialItems = specialItems
                   onClick={() => setIsEditingSpecialItems(false)}
                   type="button"
                 >
-                  Cancel
+                  {TEXT.header.cancel}
                 </button>
                 <button
                   className={styles.specialSave}
@@ -320,7 +321,7 @@ const visibleSpecialItems = specialItems
                   onClick={saveSpecialItems}
                   type="button"
                 >
-                  {isSavingSpecialItems ? 'Saving…' : 'Save'}
+                  {isSavingSpecialItems ? TEXT.header.saving : TEXT.header.save}
                 </button>
               </div>
             </section>

@@ -5,6 +5,7 @@ import { PRODUCTS_BY_SLUG } from '../config/products';
 import AvailabilityToggle from '../components/AvailabilityToggle';
 import CartQuantityControl from '../components/CartQuantityControl';
 import FavoriteButton from '../components/FavoriteButton';
+import { TEXT } from '../constants';
 import styles from './page.module.css';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -21,9 +22,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <AvailabilityToggle slug={product.slug} title={product.title} />
       </div>
       <p>{product.tagline}</p>
-      <p className={styles.price}>₹{product.price}</p>
+      <p className={styles.price}>{TEXT.money.symbol}{product.price}</p>
       <CartQuantityControl item={product} />
-      <Link className={styles.backLink} href="/">Back to menu</Link>
+      <Link className={styles.backLink} href="/">{TEXT.common.backToMenu}</Link>
     </main>
   );
 }

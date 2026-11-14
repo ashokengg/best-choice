@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import styles from './otpPopup.module.css';
+import { TEXT } from '../constants';
 
 export default function OtpPopup({ onClose }: { onClose: () => void }) {
   const [otp, setOtp] = useState("");
@@ -17,7 +18,7 @@ export default function OtpPopup({ onClose }: { onClose: () => void }) {
 
   const handleVerify = () => {
     if (!/^\d{6}$/.test(otp)) {
-      setError("Please enter a valid 6-digit OTP");
+      setError(TEXT.otp.invalid);
       return;
     }
     setError("");
@@ -27,11 +28,11 @@ export default function OtpPopup({ onClose }: { onClose: () => void }) {
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Enter OTP</DialogTitle>
+      <DialogTitle>{TEXT.otp.enter}</DialogTitle>
       <DialogContent>
         <TextField
           fullWidth
-          label="6-digit OTP"
+          label={TEXT.otp.label}
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
           margin="normal"
@@ -43,9 +44,9 @@ export default function OtpPopup({ onClose }: { onClose: () => void }) {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">Cancel</Button>
+        <Button onClick={onClose} color="secondary">{TEXT.otp.cancel}</Button>
         <Button onClick={handleVerify} variant="contained" color="primary">
-          Verify
+          {TEXT.otp.verify}
         </Button>
       </DialogActions>
     </Dialog>

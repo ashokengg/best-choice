@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { TEXT } from '../constants';
 import styles from './page.module.css';
 
 type OrderItem = { slug: string; title: string; price: number; quantity: number };
@@ -30,11 +31,11 @@ export default function OrderHistoryPage() {
           if (active) setNeedsLogin(true);
           return;
         }
-        if (!response.ok) throw new Error(result.error || 'Could not load order history.');
+        if (!response.ok) throw new Error(result.error || TEXT.orders.loadError);
         if (active) setOrders(result.orders);
       })
       .catch((loadError: unknown) => {
-        if (active) setError(loadError instanceof Error ? loadError.message : 'Could not load order history.');
+        if (active) setError(loadError instanceof Error ? loadError.message : TEXT.orders.loadError);
       })
       .finally(() => { if (active) setIsLoading(false); });
     return () => { active = false; };
@@ -43,24 +44,24 @@ export default function OrderHistoryPage() {
   return (
     <main className={styles.main}>
       <section className={styles.panel}>
-        <h1>My Order History</h1>
-        {isLoading && <p>Loading your orders…</p>}
-        {needsLogin && <p>Please <Link href="/login" className={styles.loginLink}>log in</Link> to see your orders.</p>}
+        <h1>{TEXT.orders.heading}</h1>
+        {isLoading && <p>{TEXT.orders.loading}</p>}
+        {needsLogin && <p>{TEXT.orders.loginPrompt} <Link href="/login" className={styles.loginLink}>{TEXT.common.logIn}</Link> {TEXT.orders.loginSuffix}</p>}
         {error && <p role="alert">{error}</p>}
-        {!isLoading && !needsLogin && !error && orders.length === 0 && <p>You have not placed any orders yet.</p>}
+        {!isLoading && !needsLogin && !error && orders.length === 0 && <p>{TEXT.orders.empty}</p>}
         <div className={styles.orders}>
           {orders.map((order) => (
             <article key={order.id} className={styles.order}>
-              <h2>Order #{order.id}</h2>
+              <h2>{TEXT.common.order} #{order.id}</h2>
               <p>{new Date(order.createdAt).toLocaleString()}</p>
               <ul>
                 {order.items.map((item) => (
-                  <li key={item.slug}>{item.quantity} × {item.title} — ₹{item.price * item.quantity}</li>
+                  <li key={item.slug}>{item.quantity} × {item.title} — {TEXT.money.symbol}{item.price * item.quantity}</li>
                 ))}
               </ul>
-              <p><strong>Total:</strong> ₹{order.total}</p>
-              <p><strong>Payment:</strong> {order.paymentStatus} · <strong>Order:</strong> {order.orderStatus}</p>
-              <p><strong>Transaction/reference ID:</strong> {order.transactionId}</p>
+              <p><strong>{TEXT.orders.total}</strong> {TEXT.money.symbol}{order.total}</p>
+              <p><strong>{TEXT.orders.payment}</strong> {order.paymentStatus} · <strong>{TEXT.orders.order}</strong> {order.orderStatus}</p>
+              <p><strong>{TEXT.orders.reference}</strong> {order.transactionId}</p>
             </article>
           ))}
         </div>

@@ -2,10 +2,11 @@
 import { useCart } from "../context/CartContext";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { TEXT } from '../constants';
 import styles from './floatingCheckout.module.css';
 
 export default function FloatingCheckout() {
-  const { cartItems } = useCart();
+  const { cartItems, clearCart } = useCart();
   const router = useRouter();
 
   // calculate total
@@ -19,11 +20,11 @@ export default function FloatingCheckout() {
   return (
     <>
       <div className="floating-checkout">
-        <span>🛒 View Cart ({cartItems.length} items)</span>
+        <span>{TEXT.floatingCheckout.viewCart(cartItems.length)}</span>
         <div>
-            <Button size='small' className={styles.actionButton} onClick={()=>router.push('/cart')}>Remove</Button>
-        <Button size='small' className={styles.actionButton} onClick={()=>router.push('/cart')}>Checkout</Button>
-        <span>Total: ₹{total}</span>
+            <Button size='small' className={styles.actionButton} onClick={clearCart}>{TEXT.floatingCheckout.remove}</Button>
+        <Button size='small' className={styles.actionButton} onClick={()=>router.push('/cart')}>{TEXT.floatingCheckout.checkout}</Button>
+        <span>{TEXT.floatingCheckout.total(total)}</span>
         </div>
       </div>
     </>
