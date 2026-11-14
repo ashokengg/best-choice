@@ -1,14 +1,17 @@
 .page {
   display: flex;
+  width: min(100%, 1440px);
   height: fit-content;
   gap: 30px;
-  margin-top: 10px;
+  margin: 10px auto 0;
   padding: 40px;
+  box-sizing: border-box;
   border-radius: 16px;
   background: #fff8e1;
 }
 
 .content {
+  min-width: 0;
   flex: 2;
 }
 
@@ -126,8 +129,46 @@
   }
 
   .headingRow {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .topActions {
+    flex-wrap: wrap;
+  }
+
+  .item {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+
+  .itemDetails {
+    min-width: calc(100% - 80px);
+  }
+
+  .quantityControls {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 420px) {
+  .page {
+    padding: 14px;
+  }
+
+  .title {
+    font-size: 1.15rem;
+  }
+
+  .topActions {
+    width: 100%;
+  }
+
+  .addMore,
+  .removeAll {
+    flex: 1;
+    margin-right: 0 !important;
   }
 }

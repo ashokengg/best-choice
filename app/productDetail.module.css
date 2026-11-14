@@ -1,10 +1,10 @@
 .container {
   display: grid;
-  width: 800px;
-  height: 650px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  width: min(100%, 800px);
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  margin: auto;
+  margin: 24px auto;
   padding: 20px;
 }
 
@@ -21,8 +21,9 @@
 }
 
 .image {
-  width: 50%;
-  height: 250px;
+  width: min(100%, 360px);
+  height: clamp(180px, 38vw, 300px);
+  object-fit: contain;
   border-radius: 8px;
 }
 
@@ -48,18 +49,19 @@
 
 .actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .actionsWithGap {
-  gap: 100px;
+  gap: 12px;
 }
 
 .backButton,
 .addButton {
-  position: fixed;
-  bottom: 10px;
+  position: static;
   border: 0;
   border-radius: 10px;
   cursor: pointer;
@@ -67,7 +69,7 @@
 }
 
 .backButton {
-  margin-right: 200px;
+  margin-right: 0;
   padding: 4px 10px;
   background: whitesmoke;
   color: black;
@@ -83,4 +85,29 @@
   background: #777;
   color: white;
   cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .container {
+    gap: 12px;
+    margin: 12px auto;
+    padding: 12px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .image {
+    height: clamp(160px, 55vw, 240px);
+  }
+
+  .title {
+    margin: 12px;
+  }
+
+  .actions,
+  .actionsWithGap {
+    flex-wrap: wrap;
+  }
 }

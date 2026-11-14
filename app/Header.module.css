@@ -45,6 +45,7 @@
 }
 
 .specialManageButton {
+  flex: 0 0 auto;
   padding: 3px 8px;
   border: 1px solid rgba(255, 213, 79, 0.6);
   border-radius: 6px;
@@ -148,4 +149,13 @@
 .specialSave:disabled {
   cursor: wait;
   opacity: 0.65;
+}
+
+@media (max-width: 560px) {
+  .specialEditor {
+    position: static;
+    width: min(100%, 360px);
+    max-height: 55vh;
+    margin-top: 8px;
+  }
 }

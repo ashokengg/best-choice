@@ -1,5 +1,5 @@
 .main {
-  max-width: 900px;
+  width: min(100% - 32px, 900px);
   margin: 32px auto;
   padding: 20px;
   color: white;
@@ -7,6 +7,23 @@
 
 .order {
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 560px) {
+  .main {
+    width: calc(100% - 20px);
+    margin: 14px auto;
+    padding: 0;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .order {
+    padding: 14px;
+    overflow-wrap: anywhere;
+  }
 }
 
 .panel {
