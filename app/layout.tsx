@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./Header";
 import { CartProvider } from "./context/CartContext";
+import { FavoritesProvider } from "./context/FavoritesContext";
 import { AvailabilityProvider } from "./context/AvailabilityContext";
 import { SearchProvider } from "./components/searchBar";
 import type { ReactNode } from "react";
@@ -37,10 +38,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <AvailabilityProvider>
             <CartProvider>
-             <SearchProvider>
-              <Header />
-              {children}
-            </SearchProvider>
+              <FavoritesProvider>
+                <SearchProvider>
+                  <Header />
+                  {children}
+                </SearchProvider>
+              </FavoritesProvider>
             </CartProvider>
         </AvailabilityProvider>
       </body>

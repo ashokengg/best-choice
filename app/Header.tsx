@@ -7,16 +7,21 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useEffect, useState } from 'react';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useCallback, useEffect, useState } from 'react';
 import { useCart } from './context/CartContext';
+import { useFavorites } from './context/FavoritesContext';
 import { useAvailability } from './context/AvailabilityContext';
 import { useSearch } from './components/searchBar';
+import SearchProductsModal from './components/SearchProductsModal';
+import { PRODUCTS } from './config/products';
 
 function Header() { 
 const router = useRouter();
 const pathname = usePathname();
-const { setSearchTerm } = useSearch();
+const { searchTerm, setSearchTerm } = useSearch();
 const { cartCount } = useCart();
+const { favoriteCount } = useFavorites();
 const { isManagingAvailability, toggleAvailabilityManagement, availabilityError } = useAvailability();
 const [isSignedIn, setIsSignedIn] = useState(false);
 const [isShopkeeper, setIsShopkeeper] = useState(false);
@@ -25,6 +30,8 @@ const [userEmail, setUserEmail] = useState('');
 const [userPhone, setUserPhone] = useState('');
 const [authError, setAuthError] = useState('');
 const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(null);
+const isProductDetailsPage = PRODUCTS.some((product) => pathname === `/${product.slug}`);
+const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm]);
 
   useEffect(() => {
     let active = true;
@@ -90,6 +97,7 @@ const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(n
   };
 
   return (
+    <>
     <nav className="header">
       <div className="header-main">
         <div className="header-brand">
@@ -108,11 +116,16 @@ const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(n
             </Link>
           </div>
           <div className="header-welcome">
-            <span>WELCOME TO</span>
-            <span>LALITHA FOODS</span>
+            <span>LALITHA</span>
+            <span>HOME FOODS</span>
           </div>
         </div>
         <div className="header-actions">
+          <Link aria-label={`Favourites, ${favoriteCount} saved`} className="header-favorites-link" href="/favorites">
+            <FavoriteBorderIcon aria-hidden="true" />
+            <span>Favourites</span>
+            {favoriteCount > 0 && <span className="header-favorites-count">{favoriteCount}</span>}
+          </Link>
           {isShopkeeper && (
             <div className="header-search-tools">
               <Button
@@ -189,6 +202,7 @@ const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(n
           spellCheck={false}
           placeholder="Search your favorite food..."
           className="search-input header-category-search"
+          value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <div className="header-category-group">
@@ -202,6 +216,10 @@ const [accountMenuAnchor, setAccountMenuAnchor] = useState<HTMLElement | null>(n
         </div>
       </div>
     </nav>
+    {isProductDetailsPage && searchTerm.trim() && (
+      <SearchProductsModal searchTerm={searchTerm} onClose={closeProductSearch} />
+    )}
+    </>
   )
 }
 

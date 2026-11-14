@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useAvailability } from '../context/AvailabilityContext';
 import AvailabilityToggle from '../components/AvailabilityToggle';
-import { useCart } from '../context/CartContext';
+import FavoriteButton from '../components/FavoriteButton';
+import CartQuantityControl from '../components/CartQuantityControl';
 
 const vadaTypes = [
   {
@@ -22,8 +23,6 @@ const vadaTypes = [
 
 export default function VadaPage() {
   const { isAvailable } = useAvailability();
-  const { addToCart } = useCart();
-
   return (
     <main style={{ maxWidth: 900, margin: '40px auto', padding: 24, color: 'white' }}>
       <h1 style={{ textAlign: 'center' }}>Choose Your Vada</h1>
@@ -31,8 +30,9 @@ export default function VadaPage() {
         {vadaTypes.map((vada) => (
           <article
             key={vada.slug}
-            style={{ padding: 20, borderRadius: 16, background: 'rgba(255,255,255,0.12)' }}
+            style={{ padding: 20, borderRadius: 16, background: 'rgba(255,255,255,0.12)', position: 'relative' }}
           >
+            <FavoriteButton className="favorite-button--card" slug={vada.slug} title={vada.title} />
             <img
               src={vada.image}
               alt={vada.title}
@@ -43,31 +43,12 @@ export default function VadaPage() {
             <AvailabilityToggle slug={vada.slug} title={vada.title} />
             <p>₹30 {isAvailable(vada.slug) ? '' : '· Not available'}</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button
-                type="button"
-                disabled={!isAvailable(vada.slug)}
-                onClick={() => {
-                  if (isAvailable(vada.slug)) {
-                    addToCart({
-                      slug: vada.slug,
-                      title: vada.title,
-                      price: 30,
-                      img: vada.image,
-                    });
-                  }
-                }}
-                style={{
-                  background: isAvailable(vada.slug) ? 'yellow' : '#777',
-                  color: isAvailable(vada.slug) ? 'black' : 'white',
-                  border: 0,
-                  borderRadius: 10,
-                  padding: '9px 14px',
-                  cursor: isAvailable(vada.slug) ? 'pointer' : 'not-allowed',
-                  fontWeight: 'bold',
-                }}
-              >
-                {isAvailable(vada.slug) ? 'Add to Cart' : 'Not Available'}
-              </button>
+              <CartQuantityControl item={{
+                slug: vada.slug,
+                title: vada.title,
+                price: 30,
+                img: vada.image,
+              }} />
               <Link href={`/${vada.slug}`} style={{ color: '#ffe05c', fontWeight: 'bold' }}>
                 View details
               </Link>

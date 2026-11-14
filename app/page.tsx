@@ -4,12 +4,12 @@
 import { ArrowForward } from '@mui/icons-material';
 import { motion, type Variants } from 'framer-motion';
 import Link from 'next/link';
-import { useCart } from './context/CartContext';
 import { useSearch } from './components/searchBar';
 import FloatingCheckout from './components/floatingCheckout';
-import { useAvailability } from './context/AvailabilityContext';
 import AvailabilityToggle from './components/AvailabilityToggle';
 import { MENU_PRODUCTS } from './config/products';
+import FavoriteButton from './components/FavoriteButton';
+import CartQuantityControl from './components/CartQuantityControl';
 
 const items = MENU_PRODUCTS;
 const container: Variants = {
@@ -38,8 +38,6 @@ export default function SnackCards() {
   const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(safeSearch.toLowerCase())
   );
-  const { addToCart } = useCart();
-  const { isAvailable } = useAvailability();
   return (
     <motion.div
       variants={container}
@@ -69,10 +67,12 @@ export default function SnackCards() {
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
+            position: 'relative',
             zIndex: 1,
           }}
         >
-          <img src={item.img} style={{
+          <FavoriteButton className="favorite-button--card" slug={item.slug} title={item.title} />
+          <img src={item.img} alt={item.title} style={{
             height: 70,
             width: '50%',
             borderRadius: 10,
@@ -85,40 +85,14 @@ export default function SnackCards() {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginTop: 'auto' }}>
-            <span style={{ fontWeight: 600 }}>{item.price}</span>
-              <motion.button
-                whileTap={isAvailable(item.slug) ? { scale: 0.97 } : undefined}
-                disabled={!isAvailable(item.slug)}
-                onClick={() => {
-                  if (!isAvailable(item.slug)) return;
-                  addToCart({ slug: item.slug, title: item.title, price: item.price , img: item.img});
-                }}
-                style={{
-                  background: isAvailable(item.slug) ? 'yellow' : '#777',
-                  color: isAvailable(item.slug) ? 'black' : 'white',
-                  border: 'none',
-                  borderRadius: 10,
-                  padding: '4px 6px',
-                  fontSize: 11,
-                  cursor: isAvailable(item.slug) ? 'pointer' : 'not-allowed',
-                }}
-              >
-                {isAvailable(item.slug) ? 'Add to Cart' : 'Not Available'}
-              </motion.button>
-              <Link href={`/${item.slug}`} style={{ textDecoration: 'none' }}>
+            <span style={{ fontWeight: 600 }}>₹{item.price}</span>
+              <CartQuantityControl item={item} />
+              <Link aria-label={`More information about ${item.title}`} className="product-info-link" href={`/${item.slug}`}>
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                style={{
-                  background: 'white',
-                  color: 'black',
-                  border: 'none',
-                  borderRadius: 10,
-                  padding: '4px 6px',
-                  fontSize: 11,
-                  cursor: 'pointer',
-                }}
+                className="product-info-button"
               >
-                more info<ArrowForward style={{ fontSize: 14, marginLeft: 4 }} />
+              <ArrowForward style={{ fontSize: 14 }} />
               </motion.button>
             </Link>
           </div>

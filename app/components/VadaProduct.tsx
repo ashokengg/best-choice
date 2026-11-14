@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import AvailabilityToggle from './AvailabilityToggle';
-import { useAvailability } from '../context/AvailabilityContext';
-import { useCart } from '../context/CartContext';
+import FavoriteButton from './FavoriteButton';
+import CartQuantityControl from './CartQuantityControl';
 
 type VadaProductProps = {
   slug: 'medu-vada' | 'masala-vada';
@@ -14,10 +14,6 @@ type VadaProductProps = {
 };
 
 export default function VadaProduct({ slug, title, image, description, details }: VadaProductProps) {
-  const { addToCart } = useCart();
-  const { isAvailable } = useAvailability();
-  const available = isAvailable(slug);
-
   return (
     <main
       style={{
@@ -29,8 +25,10 @@ export default function VadaProduct({ slug, title, image, description, details }
         border: '1px solid rgba(255,255,255,0.15)',
         borderRadius: 14,
         backdropFilter: 'blur(20px)',
+        position: 'relative',
       }}
     >
+      <FavoriteButton className="favorite-button--card" slug={slug} title={title} />
       <img
         src={image}
         alt={title}
@@ -43,21 +41,7 @@ export default function VadaProduct({ slug, title, image, description, details }
         {details.map((detail) => <li key={detail}>{detail}</li>)}
       </ul>
       <p style={{ fontWeight: 'bold' }}>₹30</p>
-      <button
-        type="button"
-        disabled={!available}
-        onClick={() => addToCart({ slug, title, price: 30, img: image })}
-        style={{
-          background: available ? 'yellow' : '#777',
-          color: available ? 'black' : 'white',
-          border: 0,
-          borderRadius: 10,
-          padding: '10px 18px',
-          cursor: available ? 'pointer' : 'not-allowed',
-        }}
-      >
-        {available ? 'Add To Cart' : 'Not Available'}
-      </button>
+      <CartQuantityControl item={{ slug, title, price: 30, img: image }} />
       {' '}
       <Link href="/vada" style={{ color: '#ffe05c', marginLeft: 12 }}>Other vada types</Link>
     </main>
