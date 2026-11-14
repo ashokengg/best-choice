@@ -321,15 +321,6 @@ nav {
   margin: 0 0 10px;
   font-size: 0.85rem;
 }
-.favorite-availability {
-  margin-bottom: 12px;
-  color: #376847;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-.favorite-availability.unavailable {
-  color: #a13b36;
-}
 .favorite-product-actions {
   display: flex;
   align-items: center;
@@ -569,9 +560,6 @@ nav {
   margin: 0 0 10px;
   color: #68786d;
   font-size: 13px;
-}
-.search-product-availability {
-  margin-bottom: 10px;
 }
 .search-product-actions {
   display: flex;

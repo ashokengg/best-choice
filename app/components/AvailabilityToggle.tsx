@@ -9,13 +9,7 @@ export default function AvailabilityToggle({ slug, title }: { slug: string; titl
   const available = isAvailable(slug);
 
   if (!isManagingAvailability) {
-    return (
-      <span
-        className={`${styles.status} ${available ? styles.available : styles.unavailable}`}
-      >
-        {available ? TEXT.common.available : TEXT.common.notAvailable}
-      </span>
-    );
+    return null;
   }
 
   return (
@@ -33,7 +27,6 @@ export default function AvailabilityToggle({ slug, title }: { slug: string; titl
       >
         <span className={styles.thumb} />
       </span>
-      {available ? TEXT.common.available : TEXT.common.notAvailable}
     </button>
   );
 }

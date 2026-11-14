@@ -70,9 +70,7 @@ export default function SearchProductsModal({ searchTerm, onClose }: SearchProdu
                 <Image alt={item.title} height={70} src={item.img} width={100} />
                 <h3>{item.title}</h3>
                 <p className="search-product-tagline">{item.tagline}</p>
-                <div className="search-product-availability">
-                  <AvailabilityToggle slug={item.slug} title={item.title} />
-                </div>
+                <AvailabilityToggle slug={item.slug} title={item.title} />
                 <div className="search-product-actions">
                   <span className="search-product-price">{TEXT.money.symbol}{item.price}</span>
                   <CartQuantityControl item={item} />

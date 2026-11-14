@@ -19,10 +19,6 @@
   object-fit: contain;
 }
 
-.availability {
-  margin: 12px 0;
-}
-
 .price {
   font-weight: bold;
 }

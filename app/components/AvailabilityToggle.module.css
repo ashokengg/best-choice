@@ -1,16 +1,3 @@
-.status {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.available {
-  color: #376847;
-}
-
-.unavailable {
-  color: #a13b36;
-}
-
 .toggle {
   display: inline-flex;
   align-items: center;

@@ -72,18 +72,6 @@
   font-size: 13px;
 }
 
-.availability {
-  margin-bottom: 10px;
-}
-
-.availability span {
-  color: #376847;
-}
-
-.availability span + span {
-  color: #a13b36;
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;

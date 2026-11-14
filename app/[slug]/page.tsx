@@ -18,9 +18,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <FavoriteButton className="favorite-button--card" slug={product.slug} title={product.title} />
       <Image alt={product.title} className={styles.image} height={360} src={product.img} width={520} />
       <h1>{product.title}</h1>
-      <div className={styles.availability}>
-        <AvailabilityToggle slug={product.slug} title={product.title} />
-      </div>
+      <AvailabilityToggle slug={product.slug} title={product.title} />
       <p>{product.tagline}</p>
       <p className={styles.price}>{TEXT.money.symbol}{product.price}</p>
       <CartQuantityControl item={product} />

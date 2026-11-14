@@ -78,6 +78,7 @@ export const TEXT = {
     verifyAccess: 'Could not verify shopkeeper access.',
   },
   quantity: {
+    add: 'ADD',
     label: (title: string) => `${title} quantity`,
     increase: (title: string) => `Increase ${title} quantity`,
     decrease: (title: string) => `Decrease ${title} quantity`,

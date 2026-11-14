@@ -73,7 +73,10 @@ export default function CartQuantityControl({ item }: { item: CartItemInput }) {
   };
 
   return (
-    <div aria-label={TEXT.quantity.label(item.title)} className={`${styles.control}${quantity > 0 ? ` ${styles.expanded}` : ''}`}>
+    <div
+      aria-label={TEXT.quantity.label(item.title)}
+      className={`${styles.control}${quantity > 0 ? ` ${styles.expanded}` : ` ${styles.addState}`}`}
+    >
       {quantity > 0 && (
         <button
           aria-label={TEXT.quantity.decrease(item.title)}
@@ -109,12 +112,12 @@ export default function CartQuantityControl({ item }: { item: CartItemInput }) {
         <span className={styles.tooltipTarget}>
           <button
             aria-label={available ? TEXT.quantity.increase(item.title) : TEXT.availability.unavailableAria(item.title)}
-            className={styles.button}
+            className={`${styles.button}${quantity === 0 ? ` ${styles.addButton}` : ''}`}
             disabled={!available || limitReached}
             onClick={increase}
             type="button"
           >
-            <AddIcon fontSize="small" />
+            {quantity === 0 ? TEXT.quantity.add : <AddIcon fontSize="small" />}
           </button>
         </span>
       </Tooltip>

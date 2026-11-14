@@ -58,9 +58,7 @@ export default function SnackCards() {
           <img src={item.img} alt={item.title} className={styles.image} />
           <h4 className={styles.title}>{item.title}</h4>
           <p className={styles.tagline}>{item.tagline}</p>
-          <div className={styles.availability}>
-            <AvailabilityToggle slug={item.slug} title={item.title} />
-          </div>
+          <AvailabilityToggle slug={item.slug} title={item.title} />
 
           <div className={styles.actions}>
             <span className={styles.price}>{TEXT.money.symbol}{item.price}</span>
