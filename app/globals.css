@@ -894,6 +894,7 @@ nav {
 
 .header-actions .header-action-button {
   min-height: 38px;
+  margin-left: 30px;
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
@@ -929,7 +930,8 @@ nav {
 }
 
 .search-input.header-category-search {
-  min-height: 42px;
+  min-height: 35px;
+  max-height: 35px;
   padding: 9px 16px 9px 42px;
   border: 1px solid #eadbca;
   border-radius: 999px;
@@ -988,6 +990,25 @@ nav {
 }
 
 @media (max-width: 900px) {
+  .header-main {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .header-brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .header-actions {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    margin-left: auto;
+  }
+
   .header-category-links {
     justify-content: center;
   }
@@ -1002,28 +1023,113 @@ nav {
   }
 
   .header-main {
+    display: flex;
     justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .header-brand {
+    flex: 0 1 auto;
+    min-width: 0;
+    gap: 6px;
   }
 
   .header-actions {
-    gap: 6px;
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 5px;
+    margin-left: auto;
   }
 
   .header-actions .header-action-button {
     min-height: 34px;
-    padding: 0 12px;
+    margin-left: 0;
+    padding: 0 9px;
   }
 
   .header-categories {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
     padding-top: 6px;
   }
 
   .header-category-group {
-    align-items: center;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .header-categories h3 {
+    max-width: 100%;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    overflow-wrap: anywhere;
   }
 
   .header-category-links {
     justify-content: flex-start;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-favorites-link span:not(.header-favorites-count) {
+    display: none;
+  }
+
+  .header-favorites-link {
+    width: 36px;
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .header {
+    margin-right: 6px;
+    margin-left: 6px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .header-brand {
+    gap: 4px;
+  }
+
+  .header-logo-link,
+  .header-logo-group {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .header-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .header-welcome {
+    font-size: 0.54rem;
+  }
+
+  .header-actions {
+    gap: 3px;
+  }
+
+  .header-actions .header-action-button {
+    padding-right: 7px;
+    padding-left: 7px;
+    font-size: 0.68rem !important;
+  }
+
+  .header-actions .accountButton {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
   }
 }
 

@@ -24,6 +24,8 @@ For local MongoDB, copy `.env.example` to `.env.local`; the example URI connects
 
 Passwords are bcrypt-hashed and never stored as plain text. The order API calculates item prices on the server from the shared product catalog, checks that products are available, associates orders with the authenticated account, and accepts JPEG/PNG/WebP payment screenshots up to 5 MB. UPI payment itself is not automatically verified.
 
+Password recovery uses a one-time email link that expires after 30 minutes. Configure `APP_URL` and `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` in `.env.local` (or your deployment environment) to enable delivery. Use port 465 for implicit TLS; other ports use STARTTLS as negotiated by the SMTP server. Reset tokens are stored hashed and successful resets revoke existing sessions. Never commit SMTP credentials.
+
 New registrations always receive the `customer` role. To grant shopkeeper access, first create and verify the trusted account, then assign its role manually using an administrator-controlled MongoDB connection, for example:
 
 ```javascript
@@ -33,7 +35,16 @@ db.users.updateOne(
 )
 ```
 
-Never grant the role through public registration or expose database credentials in client-side code. Never commit `.env.local`.
+The administrator access-management screen is available at `/admin`. To bootstrap its first administrator, create or verify a trusted account and assign the `admin` role through an administrator-controlled MongoDB connection:
+
+```javascript
+db.users.updateOne(
+  { email: "admin@example.com" },
+  { $set: { role: "admin" } }
+)
+```
+
+Sign in to that account and open `/admin` (or use **Manage user access** in the account menu). Administrators can search accounts and grant or revoke shopkeeper access; they cannot create or change administrator roles from the screen, and changing a user's access revokes that user's active sessions. Never grant roles through public registration or expose database credentials in client-side code. Never commit `.env.local`.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

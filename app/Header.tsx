@@ -8,12 +8,14 @@ import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import { useCallback, useEffect, useState } from 'react';
 import { useCart } from './context/CartContext';
 import { useFavorites } from './context/FavoritesContext';
 import { useAvailability } from './context/AvailabilityContext';
 import { useSearch } from './components/searchBar';
 import SearchProductsModal from './components/SearchProductsModal';
+import { SHOP_LOCATION } from './config/shop';
 import { PRODUCTS } from './config/products';
 import { DEFAULT_SPECIAL_ITEMS, MAX_SPECIAL_ITEMS } from './config/specialItems';
 import { TEXT } from './constants';
@@ -28,6 +30,7 @@ const { favoriteCount } = useFavorites();
 const { isManagingAvailability, toggleAvailabilityManagement, availabilityError } = useAvailability();
 const [isSignedIn, setIsSignedIn] = useState(false);
 const [isShopkeeper, setIsShopkeeper] = useState(false);
+const [isAdmin, setIsAdmin] = useState(false);
 const [userName, setUserName] = useState('');
 const [userEmail, setUserEmail] = useState('');
 const [userPhone, setUserPhone] = useState('');
@@ -42,6 +45,8 @@ const [festivalAnimationEnabled, setFestivalAnimationEnabled] = useState(false);
 const [isFestivalAnimationLoading, setIsFestivalAnimationLoading] = useState(true);
 const [isFestivalAnimationSaving, setIsFestivalAnimationSaving] = useState(false);
 const [festivalAnimationError, setFestivalAnimationError] = useState('');
+const [isGettingDirections, setIsGettingDirections] = useState(false);
+const [directionsError, setDirectionsError] = useState('');
 const isProductDetailsPage = PRODUCTS.some((product) => pathname === `/${product.slug}`);
 const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm]);
 const visibleSpecialItems = specialItems
@@ -56,6 +61,7 @@ const visibleSpecialItems = specialItems
             if (active) {
               setIsSignedIn(false);
               setIsShopkeeper(false);
+              setIsAdmin(false);
               setUserName('');
               setUserEmail('');
               setUserPhone('');
@@ -67,6 +73,7 @@ const visibleSpecialItems = specialItems
           if (active) {
             setIsSignedIn(true);
             setIsShopkeeper(result.user?.role === 'shopkeeper');
+            setIsAdmin(result.user?.role === 'admin');
             setUserName(typeof result.user?.name === 'string' ? result.user.name : '');
             setUserEmail(typeof result.user?.email === 'string' ? result.user.email : '');
             setUserPhone(typeof result.user?.phone === 'string' ? result.user.phone : '');
@@ -76,6 +83,7 @@ const visibleSpecialItems = specialItems
         console.error('Could not check signed-in status.', error);
         if (active) {
           setIsShopkeeper(false);
+          setIsAdmin(false);
           setAuthError(TEXT.header.accountUnavailable);
         }
       });
@@ -140,6 +148,7 @@ const visibleSpecialItems = specialItems
       if (!response.ok) throw new Error(result.error || TEXT.header.logoutError);
       setIsSignedIn(false);
       setIsShopkeeper(false);
+      setIsAdmin(false);
       setUserName('');
       setUserEmail('');
       setUserPhone('');
@@ -155,6 +164,49 @@ const visibleSpecialItems = specialItems
       router.push('/');
     }
     toggleAvailabilityManagement();
+  };
+
+  const openShopDirections = () => {
+    setDirectionsError('');
+    if (!navigator.geolocation) {
+      setDirectionsError(TEXT.header.locationUnavailable);
+      return;
+    }
+
+    const mapsWindow = window.open('about:blank', '_blank');
+    if (mapsWindow) mapsWindow.opener = null;
+    setIsGettingDirections(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const origin = `${position.coords.latitude},${position.coords.longitude}`;
+        const destination = `${SHOP_LOCATION.latitude},${SHOP_LOCATION.longitude}`;
+        const mapsUrl = new URL('https://www.google.com/maps/dir/');
+        mapsUrl.search = new URLSearchParams({
+          api: '1',
+          origin,
+          destination,
+          travelmode: 'driving',
+        }).toString();
+        if (mapsWindow && !mapsWindow.closed) {
+          mapsWindow.location.href = mapsUrl.toString();
+        } else {
+          window.location.assign(mapsUrl.toString());
+        }
+        setIsGettingDirections(false);
+      },
+      (error) => {
+        if (mapsWindow && !mapsWindow.closed) mapsWindow.close();
+        setDirectionsError(
+          error.code === error.PERMISSION_DENIED
+            ? TEXT.header.locationPermissionDenied
+            : error.code === error.POSITION_UNAVAILABLE
+              ? TEXT.header.locationUnavailable
+              : TEXT.header.locationTimeout,
+        );
+        setIsGettingDirections(false);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 },
+    );
   };
 
   const toggleSpecialItem = (slug: string) => {
@@ -249,6 +301,16 @@ const visibleSpecialItems = specialItems
             <span>{TEXT.header.favorites}</span>
             {favoriteCount > 0 && <span className="header-favorites-count">{favoriteCount}</span>}
           </Link>
+          <Button
+            aria-label={TEXT.header.directions}
+            className={styles.directionsButton}
+            disabled={isGettingDirections}
+            onClick={openShopDirections}
+            title={TEXT.header.directions}
+            type="button"
+          >
+            <MapOutlinedIcon aria-hidden="true" />
+          </Button>
           {isShopkeeper && (
             <div className="header-search-tools">
               <Button
@@ -307,8 +369,19 @@ const visibleSpecialItems = specialItems
             >
               {TEXT.header.orderHistory}
             </MenuItem>
+            {isAdmin && (
+              <MenuItem
+                onClick={() => {
+                  setAccountMenuAnchor(null);
+                  router.push('/admin');
+                }}
+              >
+                {TEXT.admin.openDashboard}
+              </MenuItem>
+            )}
           </Menu>
           {authError && <span role="alert" className="header-error">{authError}</span>}
+          {directionsError && <span role="alert" className="header-error">{directionsError}</span>}
         </div>
       </div>
       <div className="header-categories">

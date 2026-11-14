@@ -39,7 +39,11 @@ export default function LoginPage() {
         return;
       }
       const requestedPath = new URLSearchParams(window.location.search).get("next");
-      router.push(requestedPath === "/shopkeeper/orders" ? requestedPath : "/");
+      router.push(
+        requestedPath === "/shopkeeper/orders" || requestedPath === "/admin"
+          ? requestedPath
+          : "/",
+      );
     } catch {
       setError(TEXT.auth.serverUnavailable);
     } finally {
@@ -51,46 +55,46 @@ export default function LoginPage() {
 
   return (
     <main className={styles.container}>
-      <h2 className={styles.title}>{TEXT.auth.loginTitle}</h2>
+      <div className={styles.intro}>
+        <p className={styles.subtitle}>{TEXT.auth.loginSubtitle}</p>
+      </div>
       <form onSubmit={handleSubmit} className={styles.form}>
-      <input
-            type="text"
-            placeholder={TEXT.auth.emailOrMobile}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className={styles.input}
-            required
-          />
-      {error && <p role="alert" className={styles.error}>{error}</p>}
         <input
-  type="password"
-  placeholder={TEXT.auth.password}
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  className={styles.input}
-  required
-/>
+          autoComplete="username"
+          type="text"
+          placeholder={TEXT.auth.emailOrMobile}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className={styles.input}
+          required
+        />
+        <input
+          autoComplete="current-password"
+          type="password"
+          placeholder={TEXT.auth.password}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={styles.input}
+          required
+        />
+        {error && <p role="alert" className={styles.error}>{error}</p>}
         <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              className={styles.submitButton}
-              disabled={isLoading || !input || !password}
-            >
-              {isLoading ? TEXT.auth.loggingIn : TEXT.auth.login}
-            </Button>
+          type="submit"
+          variant="contained"
+          className={styles.submitButton}
+          disabled={isLoading || !input || !password}
+        >
+          {isLoading ? TEXT.auth.loggingIn : TEXT.auth.login}
+        </Button>
 
-        {/* Forgot Password link */}
-        <Link href="/forgot-password" className={styles.forgot}>
-          {TEXT.auth.forgotPassword}
-        </Link>
-
-        {/* Register button */}
-        <Link href="/register" className={styles.registerLink}>
-          <button type="button" className={styles.secondaryButton}>
+        <div className={styles.formLinks}>
+          <Link href="/register" className={styles.registerLink}>
             {TEXT.auth.register}
-          </button>
-        </Link>
+          </Link>
+          <Link href="/forgot-password" className={styles.forgot}>
+            {TEXT.auth.forgotPassword}
+          </Link>
+        </div>
       </form>
     </main>
   );
