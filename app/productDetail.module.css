@@ -13,11 +13,11 @@
   flex-direction: column;
   align-items: center;
   padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(48, 91, 60, 0.14);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  color: whitesmoke;
-  backdrop-filter: blur(80px);
+  background: rgba(255, 255, 255, 0.94);
+  color: #263b2c;
+  box-shadow: 0 10px 28px rgba(37, 68, 45, 0.1);
 }
 
 .image {
@@ -32,8 +32,8 @@
   margin: 20px;
   padding: 5px 20px;
   border-radius: 30px;
-  background: purple;
-  color: whitesmoke;
+  background: #e7f0e5;
+  color: #294d35;
 }
 
 .description {

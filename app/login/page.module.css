@@ -2,15 +2,20 @@
   width: min(100% - 32px, 400px);
   margin: clamp(32px, 12vh, 150px) auto;
   padding: 20px;
+  border: 1px solid rgba(48, 91, 60, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #263b2c;
+  box-shadow: 0 12px 32px rgba(37, 68, 45, 0.1);
 }
 
 .title {
   margin-bottom: 20px;
   padding: 10px 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(48, 91, 60, 0.12);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  background: #e7f0e5;
+  color: #294d35;
   font-weight: 600;
   backdrop-filter: blur(8px);
 }
@@ -25,8 +30,8 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #fff;
+  color: #263b2c;
 }
 
 .error {
@@ -45,7 +50,7 @@
 
 .forgot {
   margin-top: 8px;
-  color: white;
+  color: #245c91;
   font-size: 14px;
   cursor: pointer;
   text-decoration: underline;

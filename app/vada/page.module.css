@@ -2,7 +2,7 @@
   width: min(100% - 32px, 900px);
   margin: clamp(16px, 5vh, 40px) auto;
   padding: 24px;
-  color: white;
+  color: #263b2c;
 }
 
 .title {
@@ -19,7 +19,9 @@
   position: relative;
   padding: 20px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(48, 91, 60, 0.14);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 22px rgba(37, 68, 45, 0.08);
 }
 
 .image {
@@ -35,7 +37,7 @@
 }
 
 .details {
-  color: #ffe05c;
+  color: #315d3d;
   font-weight: bold;
 }
 

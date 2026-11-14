@@ -15,11 +15,22 @@
   flex-direction: column;
   box-sizing: border-box;
   padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
+  border: 1px solid rgba(48, 91, 60, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #263b2c;
+  box-shadow: 0 8px 22px rgba(37, 68, 45, 0.08);
   backdrop-filter: blur(10px);
+  transition: box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card:hover {
+  border-color: rgba(48, 91, 60, 0.2);
+  box-shadow: 0 12px 28px rgba(37, 68, 45, 0.13);
+}
+
+.card :global(.favorite-button:not([aria-pressed="true"])) {
+  color: #52705c;
 }
 
 .image {
@@ -31,17 +42,26 @@
 
 .title {
   margin: 0 0 6px;
+  color: #263b2c;
   letter-spacing: 0.5px;
 }
 
 .tagline {
   margin: 0 0 10px;
+  color: #68786d;
   font-size: 13px;
-  opacity: 0.9;
 }
 
 .availability {
   margin-bottom: 10px;
+}
+
+.availability span {
+  color: #376847;
+}
+
+.availability span + span {
+  color: #a13b36;
 }
 
 .actions {
@@ -54,6 +74,7 @@
 }
 
 .price {
+  color: #294d35;
   font-weight: 600;
 }
 
