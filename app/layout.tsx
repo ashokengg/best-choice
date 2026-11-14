@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 import styles from "./layout.module.css";
 import { TEXT } from "./constants";
 import SankrantiAnimation from "./components/SankrantiAnimation";
+import ChatAssistant from "./components/ChatAssistant";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <SearchProvider>
                   <SankrantiAnimation />
                   <Header />
+                  <ChatAssistant />
                   {children}
                 </SearchProvider>
               </FavoritesProvider>

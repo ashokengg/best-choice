@@ -4,13 +4,11 @@ import Image from 'next/image';
 import "./globals.css";
 import { usePathname, useRouter } from 'next/navigation';
 import { Button, Menu, MenuItem } from '@mui/material';
-import Badge from '@mui/material/Badge';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import { useCallback, useEffect, useState } from 'react';
-import { useCart } from './context/CartContext';
 import { useFavorites } from './context/FavoritesContext';
 import { useAvailability } from './context/AvailabilityContext';
 import { useSearch } from './components/searchBar';
@@ -25,7 +23,6 @@ function Header() {
 const router = useRouter();
 const pathname = usePathname();
 const { searchTerm, setSearchTerm } = useSearch();
-const { cartCount } = useCart();
 const { favoriteCount } = useFavorites();
 const { isManagingAvailability, toggleAvailabilityManagement, availabilityError } = useAvailability();
 const [isSignedIn, setIsSignedIn] = useState(false);
@@ -296,131 +293,167 @@ const visibleSpecialItems = specialItems
           </div>
         </div>
         <div className="header-actions">
-          <Link aria-label={TEXT.header.favoritesAria(favoriteCount)} className="header-favorites-link" href="/favorites">
-            <FavoriteBorderIcon aria-hidden="true" />
-            <span>{TEXT.header.favorites}</span>
-            {favoriteCount > 0 && <span className="header-favorites-count">{favoriteCount}</span>}
-          </Link>
-          <Button
-            aria-label={TEXT.header.directions}
-            className={styles.directionsButton}
-            disabled={isGettingDirections}
-            onClick={openShopDirections}
-            title={TEXT.header.directions}
-            type="button"
-          >
-            <MapOutlinedIcon aria-hidden="true" />
-          </Button>
-          {isShopkeeper && (
-            <div className="header-search-tools">
-              <Button
-                type="button"
-                aria-pressed={isManagingAvailability}
-                onClick={handleManageItemsClick}
-                className={`${styles.manageButton} ${isManagingAvailability ? styles.manageButtonActive : styles.manageButtonInactive}`}
-              >
-                {isManagingAvailability ? TEXT.header.done : TEXT.header.manageItems}
-              </Button>
-            </div>
-          )}
-          {availabilityError && <span role="alert" className="header-error">{availabilityError}</span>}
-          <Badge badgeContent={cartCount} color="secondary">
-            <ShoppingCartIcon
-              aria-label={TEXT.header.shoppingCartAria}
-              onClick={() => router.push('/cart')}
-              className={styles.cartIcon}
-            />
-          </Badge>
-          <Button
-            onClick={handleAccountButton}
-            className={`header-action-button ${styles.loginButton}`}
-          >
-            {isSignedIn ? TEXT.header.logout : TEXT.header.login}
-          </Button>
-          <Button
-            type="button"
-            aria-label={TEXT.header.accountMenu}
-            aria-controls={accountMenuAnchor ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={accountMenuAnchor ? 'true' : undefined}
-            onClick={(event) => setAccountMenuAnchor(event.currentTarget)}
-            className={styles.accountButton}
-          >
-            <MenuIcon />
-          </Button>
-          <Menu
-            id="account-menu"
-            anchorEl={accountMenuAnchor}
-            open={Boolean(accountMenuAnchor)}
-            onClose={() => setAccountMenuAnchor(null)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <div className="account-menu-customer">
-              <strong>{isSignedIn ? userName || TEXT.header.customer : TEXT.header.guest}</strong>
-              {userEmail && <span>{userEmail}</span>}
-              {userPhone && <span>{userPhone}</span>}
-            </div>
-            <MenuItem
-              onClick={() => {
-                setAccountMenuAnchor(null);
-                router.push('/orders');
-              }}
+          <div className="header-mobile-shortcuts">
+            <Link aria-label={TEXT.header.favoritesAria(favoriteCount)} className="header-favorites-link" href="/favorites">
+              <FavoriteBorderIcon aria-hidden="true" />
+              <span>{TEXT.header.favorites}</span>
+              {favoriteCount > 0 && <span className="header-favorites-count">{favoriteCount}</span>}
+            </Link>
+            <Button
+              aria-label={TEXT.header.directions}
+              className={styles.directionsButton}
+              disabled={isGettingDirections}
+              onClick={openShopDirections}
+              title={TEXT.header.directions}
+              type="button"
             >
-              {TEXT.header.orderHistory}
-            </MenuItem>
-            {isAdmin && (
+              <MapOutlinedIcon aria-hidden="true" />
+            </Button>
+          </div>
+          <div className="header-account-actions">
+            {isShopkeeper && (
+              <div className="header-search-tools">
+                <Button
+                  type="button"
+                  aria-pressed={isManagingAvailability}
+                  onClick={handleManageItemsClick}
+                  className={`${styles.manageButton} ${isManagingAvailability ? styles.manageButtonActive : styles.manageButtonInactive}`}
+                >
+                  {isManagingAvailability ? TEXT.header.done : TEXT.header.manageItems}
+                </Button>
+              </div>
+            )}
+            {availabilityError && <span role="alert" className="header-error header-availability-error">{availabilityError}</span>}
+            <Button
+              onClick={handleAccountButton}
+              className={`header-action-button ${styles.loginButton}`}
+            >
+              {isSignedIn ? TEXT.header.logout : TEXT.header.login}
+            </Button>
+            <Button
+              type="button"
+              aria-label={TEXT.header.accountMenu}
+              aria-controls={accountMenuAnchor ? 'account-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={accountMenuAnchor ? 'true' : undefined}
+              onClick={(event) => setAccountMenuAnchor(event.currentTarget)}
+              className={`header-account-menu-button ${styles.accountButton}`}
+            >
+              <MenuIcon />
+            </Button>
+            <Menu
+              id="account-menu"
+              anchorEl={accountMenuAnchor}
+              open={Boolean(accountMenuAnchor)}
+              onClose={() => setAccountMenuAnchor(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <div className="account-menu-customer">
+                <strong>{isSignedIn ? userName || TEXT.header.customer : TEXT.header.guest}</strong>
+                {userEmail && <span>{userEmail}</span>}
+                {userPhone && <span>{userPhone}</span>}
+              </div>
               <MenuItem
                 onClick={() => {
                   setAccountMenuAnchor(null);
-                  router.push('/admin');
+                  router.push('/orders');
                 }}
               >
-                {TEXT.admin.openDashboard}
+                {TEXT.header.orderHistory}
               </MenuItem>
-            )}
-          </Menu>
-          {authError && <span role="alert" className="header-error">{authError}</span>}
-          {directionsError && <span role="alert" className="header-error">{directionsError}</span>}
+              {isAdmin && (
+                <MenuItem
+                  onClick={() => {
+                    setAccountMenuAnchor(null);
+                    router.push('/admin');
+                  }}
+                >
+                  {TEXT.admin.openDashboard}
+                </MenuItem>
+              )}
+              {isShopkeeper && (
+                <div className={styles.shopkeeperSettings}>
+                  <p className={styles.settingsHeading}>{TEXT.header.shopSettings}</p>
+                  <button
+                    aria-pressed={festivalAnimationEnabled}
+                    className={`${styles.festivalAnimationButton} ${festivalAnimationEnabled ? styles.festivalAnimationActive : ''}`}
+                    disabled={isFestivalAnimationLoading || isFestivalAnimationSaving}
+                    onClick={toggleFestivalAnimation}
+                    type="button"
+                  >
+                    {isFestivalAnimationSaving
+                      ? TEXT.header.saving
+                      : festivalAnimationEnabled
+                        ? TEXT.header.festivalAnimationOn
+                        : TEXT.header.festivalAnimationOff}
+                  </button>
+                  {festivalAnimationError && (
+                    <p className={styles.settingsError} role="alert">{festivalAnimationError}</p>
+                  )}
+                  <button
+                    aria-expanded={isEditingSpecialItems}
+                    className={styles.specialManageButton}
+                    onClick={isEditingSpecialItems
+                      ? () => setIsEditingSpecialItems(false)
+                      : openSpecialItemsEditor}
+                    type="button"
+                  >
+                    {isEditingSpecialItems ? TEXT.header.close : TEXT.header.manageSpecialItems}
+                  </button>
+                  {specialItemsError && !isEditingSpecialItems && (
+                    <p className={styles.settingsError} role="alert">{specialItemsError}</p>
+                  )}
+                  {isEditingSpecialItems && (
+                    <section aria-label={TEXT.header.specialEditorAria} className={styles.specialEditor}>
+                      <p className={styles.specialEditorTitle}>{TEXT.header.chooseSpecialItems(MAX_SPECIAL_ITEMS)}</p>
+                      <p className={styles.specialEditorCount}>{TEXT.header.selectedSpecialItems(specialItemsDraft.length, MAX_SPECIAL_ITEMS)}</p>
+                      <div className={styles.specialOptions}>
+                        {PRODUCTS.map((product) => (
+                          <label className={styles.specialOption} key={product.slug}>
+                            <input
+                              checked={specialItemsDraft.includes(product.slug)}
+                              disabled={!specialItemsDraft.includes(product.slug) && specialItemsDraft.length >= MAX_SPECIAL_ITEMS}
+                              onChange={() => toggleSpecialItem(product.slug)}
+                              type="checkbox"
+                            />
+                            {product.title}
+                          </label>
+                        ))}
+                      </div>
+                      {specialItemsError && <p className={styles.settingsError} role="alert">{specialItemsError}</p>}
+                      <div className={styles.specialEditorActions}>
+                        <button
+                          className={styles.specialCancel}
+                          disabled={isSavingSpecialItems}
+                          onClick={() => setIsEditingSpecialItems(false)}
+                          type="button"
+                        >
+                          {TEXT.header.cancel}
+                        </button>
+                        <button
+                          className={styles.specialSave}
+                          disabled={isSavingSpecialItems}
+                          onClick={saveSpecialItems}
+                          type="button"
+                        >
+                          {isSavingSpecialItems ? TEXT.header.saving : TEXT.header.save}
+                        </button>
+                      </div>
+                    </section>
+                  )}
+                </div>
+              )}
+            </Menu>
+            {authError && <span role="alert" className="header-error header-session-error">{authError}</span>}
+            {directionsError && <span role="alert" className="header-error header-session-error">{directionsError}</span>}
+          </div>
         </div>
       </div>
       <div className="header-categories">
-        <input
-          type="text"
-          spellCheck={false}
-          placeholder={TEXT.header.searchPlaceholder}
-          className="search-input header-category-search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
         <div className={`header-category-group ${styles.specialCategoryGroup}`}>
           <div className={styles.specialHeading}>
             <h3>{TEXT.header.specialItemsHeading}</h3>
-            {isShopkeeper && (
-              <button
-                aria-pressed={festivalAnimationEnabled}
-                className={`${styles.festivalAnimationButton} ${festivalAnimationEnabled ? styles.festivalAnimationActive : ''}`}
-                disabled={isFestivalAnimationLoading || isFestivalAnimationSaving}
-                onClick={toggleFestivalAnimation}
-                type="button"
-              >
-                {isFestivalAnimationSaving
-                  ? TEXT.header.saving
-                  : festivalAnimationEnabled
-                    ? TEXT.header.festivalAnimationOn
-                    : TEXT.header.festivalAnimationOff}
-              </button>
-            )}
-            {isShopkeeper && (
-              <button
-                aria-expanded={isEditingSpecialItems}
-                className={styles.specialManageButton}
-                onClick={isEditingSpecialItems ? () => setIsEditingSpecialItems(false) : openSpecialItemsEditor}
-                type="button"
-              >
-                {isEditingSpecialItems ? TEXT.header.close : TEXT.header.manage}
-              </button>
-            )}
           </div>
           <div className="header-category-links">
             {visibleSpecialItems.map((product) => (
@@ -429,51 +462,23 @@ const visibleSpecialItems = specialItems
               </Link>
             ))}
           </div>
-          {isEditingSpecialItems && isShopkeeper && (
-            <section aria-label={TEXT.header.specialEditorAria} className={styles.specialEditor}>
-              <p className={styles.specialEditorTitle}>{TEXT.header.chooseSpecialItems(MAX_SPECIAL_ITEMS)}</p>
-              <p className={styles.specialEditorCount}>{TEXT.header.selectedSpecialItems(specialItemsDraft.length, MAX_SPECIAL_ITEMS)}</p>
-              <div className={styles.specialOptions}>
-                {PRODUCTS.map((product) => (
-                  <label className={styles.specialOption} key={product.slug}>
-                    <input
-                      checked={specialItemsDraft.includes(product.slug)}
-                      disabled={!specialItemsDraft.includes(product.slug) && specialItemsDraft.length >= MAX_SPECIAL_ITEMS}
-                      onChange={() => toggleSpecialItem(product.slug)}
-                      type="checkbox"
-                    />
-                    {product.title}
-                  </label>
-                ))}
-              </div>
-              {specialItemsError && <p className={styles.specialError} role="alert">{specialItemsError}</p>}
-              <div className={styles.specialEditorActions}>
-                <button
-                  className={styles.specialCancel}
-                  disabled={isSavingSpecialItems}
-                  onClick={() => setIsEditingSpecialItems(false)}
-                  type="button"
-                >
-                  {TEXT.header.cancel}
-                </button>
-                <button
-                  className={styles.specialSave}
-                  disabled={isSavingSpecialItems}
-                  onClick={saveSpecialItems}
-                  type="button"
-                >
-                  {isSavingSpecialItems ? TEXT.header.saving : TEXT.header.save}
-                </button>
-              </div>
-            </section>
-          )}
-          {!isEditingSpecialItems && specialItemsError && (
-            <span className="header-error" role="alert">{specialItemsError}</span>
-          )}
-          {festivalAnimationError && (
-            <span className="header-error" role="alert">{festivalAnimationError}</span>
-          )}
         </div>
+        <input
+          type="text"
+          spellCheck={false}
+          placeholder={TEXT.header.searchPlaceholder}
+          className="search-input header-category-search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Link
+          aria-current={pathname === '/about' ? 'page' : undefined}
+          className={`snacks ${styles.aboutLink}`}
+          href="/about"
+        >
+          {TEXT.header.aboutUs}
+          <HandshakeOutlinedIcon aria-hidden="true" className={styles.aboutIcon} />
+        </Link>
       </div>
     </nav>
     {isProductDetailsPage && searchTerm.trim() && (

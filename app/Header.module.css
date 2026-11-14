@@ -23,12 +23,6 @@
   background: #1d4d31;
 }
 
-.cartIcon {
-  color: #315d42;
-  cursor: pointer;
-  font-size: 26px;
-}
-
 .directionsButton {
   width: 38px;
   height: 38px;
@@ -56,6 +50,58 @@
 .loginButton {
   border-radius: 12px !important;
   font-weight: bold !important;
+}
+
+.aboutLink.aboutLink {
+  display: inline-flex;
+  width: max-content;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  margin-right: 0;
+  padding: 0 8px;
+  border: 1px solid #24643e;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #318653, #21633e);
+  box-shadow: 0 5px 12px rgba(40, 115, 72, 0.16);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.045em;
+  line-height: 1;
+  text-decoration: none;
+  gap: 4px;
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.aboutIcon {
+  width: 13px;
+  height: 13px;
+}
+
+.aboutLink.aboutLink:hover,
+.aboutLink.aboutLink[aria-current='page'] {
+  border-color: #194e31;
+  background: linear-gradient(135deg, #287348, #194e31);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 7px 16px rgba(40, 115, 72, 0.24);
+}
+
+.aboutLink.aboutLink::after {
+  display: none;
+}
+
+.aboutLink.aboutLink:focus-visible {
+  outline: 3px solid rgba(76, 142, 91, 0.35);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aboutLink.aboutLink {
+    transition: none;
+  }
 }
 
 .accountButton {
@@ -118,17 +164,48 @@
 
 .specialCategoryGroup {
   position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.specialCategoryGroup :global(.header-category-links) {
+  width: auto;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+.shopkeeperSettings {
+  display: grid;
+  width: min(340px, calc(100vw - 48px));
+  gap: 8px;
+  padding: 8px 12px 12px;
+  box-sizing: border-box;
+}
+
+.settingsHeading {
+  margin: 0;
+  color: #285d3d;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.settingsError {
+  margin: 0;
+  color: #a93636;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .specialEditor {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  z-index: 20;
-  width: min(320px, calc(100vw - 32px));
+  width: 100%;
   max-height: min(70vh, 480px);
   overflow-y: auto;
-  padding: 16px;
+  padding: 12px;
   border: 1px solid rgba(44, 105, 69, 0.16);
   border-radius: 12px;
   background: #fffef9;
@@ -217,10 +294,19 @@
 }
 
 @media (max-width: 560px) {
-  .specialEditor {
-    position: static;
-    width: min(100%, 360px);
-    max-height: 55vh;
-    margin-top: 8px;
+  .aboutLink.aboutLink {
+    margin-right: 0;
+  }
+
+  .specialCategoryGroup {
+    flex-wrap: wrap;
+  }
+
+  .specialCategoryGroup :global(.header-category-links) {
+    flex-wrap: wrap;
+  }
+
+  .shopkeeperSettings {
+    width: min(340px, calc(100vw - 40px));
   }
 }

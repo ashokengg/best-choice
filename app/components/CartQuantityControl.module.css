@@ -60,9 +60,9 @@
   min-width: 62px;
   height: 32px;
   padding: 0 13px;
-  border: 1px solid #287348;
+  border: 1px solid #285d3d;
   border-radius: 8px;
-  background: #287348;
+  background: #285d3d;
   color: #fff;
   font-size: 0.72rem;
   font-weight: 800;
@@ -72,7 +72,7 @@
 
 .addButton:not(:disabled):hover {
   transform: translateY(-1px);
-  background: #1d5b39;
+  background: #285d3d;
   box-shadow: 0 4px 10px rgba(40, 115, 72, 0.2);
 }
 
