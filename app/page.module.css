@@ -287,20 +287,22 @@
 .imageWrap {
   position: relative;
   display: flex;
-  height: 90px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  overflow: visible;
-  padding: 5px 2px 0;
-  background: transparent;
+  height: auto;
+  aspect-ratio: 1.45;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 11px;
+  background: #f4efe6;
 }
 
 .image {
-  width: 54%;
-  height: 78px;
+  width: 100%;
+  height: 100%;
   margin: 0;
-  border-radius: 9px;
-  object-fit: contain;
+  border-radius: inherit;
+  object-fit: cover;
   transition: transform 220ms ease;
 }
 
@@ -420,10 +422,16 @@
   text-align: center;
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1051px) {
   .grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -450,20 +458,6 @@
     height: 64px;
     border-radius: 18px;
     font-size: 2rem;
-  }
-
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 13px;
-  }
-
-  .imageWrap {
-    height: 86px;
-  }
-
-  .image {
-    width: 56%;
-    height: 74px;
   }
 }
 
@@ -549,17 +543,8 @@
   }
 
   .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-  }
-
-  .imageWrap {
-    height: 78px;
-    padding: 3px 1px 0;
-  }
-
-  .image {
-    width: 58%;
-    height: 68px;
   }
 
   .cardBody {
@@ -586,6 +571,10 @@
 }
 
 @media (max-width: 360px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .hero {
     padding-right: 17px;
     padding-left: 17px;
