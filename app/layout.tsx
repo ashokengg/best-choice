@@ -9,6 +9,7 @@ import { SearchProvider } from "./components/searchBar";
 import type { ReactNode } from "react";
 import styles from "./layout.module.css";
 import { TEXT } from "./constants";
+import SankrantiAnimation from "./components/SankrantiAnimation";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <CartProvider>
               <FavoritesProvider>
                 <SearchProvider>
+                  <SankrantiAnimation />
                   <Header />
                   {children}
                 </SearchProvider>

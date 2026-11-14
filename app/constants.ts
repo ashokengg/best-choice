@@ -44,7 +44,7 @@ export const TEXT = {
     invalidServerSpecialItems: 'The server returned an invalid special items list.',
     orderHistory: 'Order History',
     searchPlaceholder: 'Search your favorite food...',
-    specialItemsHeading: 'ORDER SPECIAL ITEMS :',
+    specialItemsHeading: 'ORDER SPECIAL ITEMS',
     close: 'Close',
     manage: 'Manage',
     chooseSpecialItems: (limit: number) => `Choose up to ${limit} items`,
@@ -54,6 +54,16 @@ export const TEXT = {
     saving: 'Saving…',
     specialEditorAria: 'Manage header special items',
     shoppingCartAria: 'Shopping cart',
+    festivalAnimation: 'Sankranti celebration',
+    festivalAnimationOn: 'Makar Sankranti animation: On',
+    festivalAnimationOff: 'Makar Sankranti animation: Off',
+    festivalAnimationLoadError: 'Could not load the festival animation setting.',
+    festivalAnimationInvalidSetting: 'The festival animation setting is invalid.',
+    festivalAnimationUpdateError: 'Could not update the festival animation setting.',
+  },
+  festival: {
+    celebrationLabel: 'Makar Sankranti celebration',
+    greeting: 'Happy Makar Sankranti',
   },
   home: {
     productInfo: (title: string) => `More information about ${title}`,
@@ -267,6 +277,11 @@ export const TEXT = {
       invalidList: 'Provide a list of special item slugs.',
       invalidSelection: (limit: number) => `Select up to ${limit} different menu items.`,
       saveFailed: 'Unable to save header special items.',
+    },
+    festivalAnimation: {
+      loadFailed: 'Unable to load the festival animation setting.',
+      invalidSetting: 'Provide a valid festival animation setting.',
+      updateFailed: 'Unable to update the festival animation setting.',
     },
     orders: {
       loadFailed: 'Unable to load order history.',

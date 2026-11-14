@@ -15,18 +15,38 @@
   flex-direction: column;
   box-sizing: border-box;
   padding: 12px;
-  border: 1px solid rgba(48, 91, 60, 0.12);
+  border: 1px solid rgba(48, 91, 60, 0.13);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(155deg, #fff 0%, #fffaf4 100%);
   color: #263b2c;
-  box-shadow: 0 8px 22px rgba(37, 68, 45, 0.08);
+  box-shadow: 0 8px 24px rgba(91, 65, 42, 0.09);
   backdrop-filter: blur(10px);
-  transition: box-shadow 180ms ease, border-color 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .card:hover {
-  border-color: rgba(48, 91, 60, 0.2);
-  box-shadow: 0 12px 28px rgba(37, 68, 45, 0.13);
+  transform: translateY(-3px);
+  border-color: rgba(232, 122, 70, 0.3);
+  box-shadow: 0 14px 30px rgba(91, 65, 42, 0.14);
+}
+
+.card:nth-child(4n + 2) {
+  border-top: 3px solid #ed8063;
+  background: linear-gradient(155deg, #fff 0%, #fff4ed 100%);
+}
+
+.card:nth-child(4n + 3) {
+  border-top: 3px solid #5b9c68;
+  background: linear-gradient(155deg, #fff 0%, #f1f8ef 100%);
+}
+
+.card:nth-child(4n + 4) {
+  border-top: 3px solid #e9b64d;
+  background: linear-gradient(155deg, #fff 0%, #fff8e6 100%);
+}
+
+.card:nth-child(4n + 1) {
+  border-top: 3px solid #5b9c68;
 }
 
 .card :global(.favorite-button:not([aria-pressed="true"])) {
@@ -74,7 +94,7 @@
 }
 
 .price {
-  color: #294d35;
+  color: #a6532d;
   font-weight: 600;
 }
 

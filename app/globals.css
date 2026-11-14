@@ -1,9 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3f6ef;
-  --foreground: #25352a;
-  --page-surface: #f3f6ef;
+  --background: #fff8f0;
+  --foreground: #302d28;
+  --page-surface: #fff8f0;
+  --brand-primary: #287348;
+  --brand-primary-dark: #1d5b39;
+  --brand-accent: #e85d3f;
+  --brand-gold: #f2ad3d;
+  --brand-muted: #68766d;
 }
 
 @theme inline {
@@ -15,8 +20,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #f3f6ef;
-    --foreground: #25352a;
+    --background: #fff8f0;
+    --foreground: #302d28;
   }
 }
 
@@ -24,12 +29,25 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(ellipse at 10% 4%, rgba(251, 224, 172, 0.3), transparent 30rem),
-    radial-gradient(ellipse at 94% 28%, rgba(194, 224, 199, 0.28), transparent 34rem),
-    linear-gradient(180deg, #f8f8f1 0%, #eef4ed 48%, #f5f4ec 100%);
+    radial-gradient(ellipse at 4% 12%, rgba(255, 190, 132, 0.26), transparent 32rem),
+    radial-gradient(ellipse at 94% 24%, rgba(149, 207, 165, 0.3), transparent 35rem),
+    radial-gradient(ellipse at 68% 88%, rgba(255, 219, 147, 0.18), transparent 30rem),
+    linear-gradient(180deg, #fffaf3 0%, #f2f7ef 48%, #fff6ec 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+body::before {
+  position: fixed;
+  z-index: 19;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 8px;
+  background: #fff9ef;
+  content: "";
+  pointer-events: none;
 }
 
 * {
@@ -274,6 +292,21 @@ nav {
   border-color: rgba(48, 91, 60, 0.22);
   box-shadow: 0 12px 28px rgba(37, 68, 45, 0.13);
 }
+.favorite-product-card:nth-child(4n + 2) {
+  border-top: 3px solid #ed8063;
+  background: linear-gradient(155deg, #fff 0%, #fff3ec 100%);
+}
+.favorite-product-card:nth-child(4n + 3) {
+  border-top: 3px solid #5b9c68;
+  background: linear-gradient(155deg, #fff 0%, #f0f8ee 100%);
+}
+.favorite-product-card:nth-child(4n + 4) {
+  border-top: 3px solid #e9b64d;
+  background: linear-gradient(155deg, #fff 0%, #fff8e5 100%);
+}
+.favorite-product-card:nth-child(4n + 1) {
+  border-top: 3px solid #5b9c68;
+}
 .favorite-product-card > img {
   width: 50%;
   height: 90px;
@@ -398,7 +431,7 @@ nav {
 }
 .header-categories h3 {
   margin: 0;
-  color: #ffd54f;
+  color: #285d3d;
   font-size: 11px;
   letter-spacing: 1.5px;
 }
@@ -443,10 +476,10 @@ nav {
   max-height: min(88vh, 900px);
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(40, 115, 72, 0.18);
   border-radius: 16px;
-  background: #14243a;
-  color: white;
+  background: #fffaf3;
+  color: #302d28;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
 }
 .search-products-heading {
@@ -456,7 +489,8 @@ nav {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(173, 101, 57, 0.16);
+  background: linear-gradient(110deg, #fff0df, #f0f8ef);
 }
 .search-products-heading h2,
 .search-products-heading p {
@@ -467,7 +501,7 @@ nav {
 }
 .search-products-heading p {
   margin-top: 4px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #68766d;
   font-size: 0.9rem;
 }
 .search-products-close {
@@ -478,8 +512,8 @@ nav {
   place-items: center;
   border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
+  background: #e8f1e7;
+  color: #285d3d;
   cursor: pointer;
   font-size: 1.7rem;
   line-height: 1;
@@ -500,9 +534,24 @@ nav {
   padding: 12px;
   border: 1px solid rgba(48, 91, 60, 0.14);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.96);
+  background: #fff;
   color: #263b2c;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 18px rgba(91, 65, 42, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.search-product-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(232, 122, 70, 0.36);
+  box-shadow: 0 12px 24px rgba(91, 65, 42, 0.13);
+}
+.search-product-card:nth-child(3n + 1) {
+  border-top: 3px solid #5b9c68;
+}
+.search-product-card:nth-child(3n + 2) {
+  border-top: 3px solid #ed8063;
+}
+.search-product-card:nth-child(3n + 3) {
+  border-top: 3px solid #e9b64d;
 }
 .search-product-card > img {
   width: 50%;
@@ -533,7 +582,7 @@ nav {
 }
 .search-product-price {
   margin-right: auto;
-  color: #294d35;
+  color: #a6532d;
   font-weight: 600;
 }
 .search-product-actions button,
@@ -643,7 +692,7 @@ nav {
   .header-actions {
     width: 100%;
     justify-content: center;
-    gap: 6px 10px;
+    gap: 8px 14px;
   }
 
   .header-search-tools {
@@ -805,14 +854,15 @@ nav {
 .header {
   position: sticky;
   top: 8px;
+  z-index: 20;
   margin: 8px auto 16px;
   padding: 10px clamp(14px, 2.4vw, 32px) 12px;
-  border: 1px solid rgba(31, 84, 55, 0.12);
+  border: 1px solid rgba(40, 115, 72, 0.17);
   border-radius: 22px;
   background:
-    radial-gradient(ellipse at 92% 0%, rgba(251, 220, 148, 0.22), transparent 34%),
-    linear-gradient(112deg, #fffdf7 0%, #f8fbf3 52%, #f2faf4 100%);
-  box-shadow: 0 12px 30px rgba(34, 57, 42, 0.1);
+    radial-gradient(ellipse at 90% 0%, rgba(255, 186, 128, 0.26), transparent 36%),
+    linear-gradient(112deg, #fff9ef 0%, #fffdf7 48%, #edf8ef 100%);
+  box-shadow: 0 14px 34px rgba(105, 78, 47, 0.12);
   backdrop-filter: blur(18px);
 }
 
@@ -825,12 +875,13 @@ nav {
 }
 
 .header-welcome {
-  color: #356448;
-  letter-spacing: 0.1em;
+  color: #285d3d;
+  font-weight: 800;
+  font-size: x-small;
 }
 
 .header-actions {
-  gap: 8px;
+  gap: 14px;
 }
 
 .header-favorites-link {
@@ -858,7 +909,7 @@ nav {
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
-  background: #285d3d;
+  background: linear-gradient(135deg, #318653, #21633e);
   color: white;
   font-weight: 700;
   transition: background-color 160ms ease, transform 160ms ease;
@@ -866,7 +917,7 @@ nav {
 
 .header-actions .header-action-button:hover {
   transform: translateY(-1px);
-  background: #1d4d31;
+  background: linear-gradient(135deg, #287348, #194e31);
 }
 
 .header-actions .accountButton {
@@ -892,11 +943,11 @@ nav {
 .search-input.header-category-search {
   min-height: 42px;
   padding: 9px 16px 9px 42px;
-  border: 1px solid #dce8dd;
+  border: 1px solid #eadbca;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.88);
   color: #24352a;
-  box-shadow: 0 3px 10px rgba(40, 75, 49, 0.04);
+  box-shadow: 0 4px 12px rgba(117, 81, 46, 0.07);
 }
 
 .search-input.header-category-search::placeholder {
@@ -904,8 +955,8 @@ nav {
 }
 
 .search-input.header-category-search:focus {
-  border-color: #75a982;
-  outline: 3px solid rgba(76, 142, 91, 0.14);
+  border-color: #e58b58;
+  outline: 3px solid rgba(232, 122, 70, 0.16);
 }
 
 .header-category-group {
@@ -913,9 +964,9 @@ nav {
 }
 
 .header-categories h3 {
-  color: #53725b;
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  color: #285d3d;
+  font-size: x-small;
+  font-weight: 800;
 }
 
 .header-category-links {
@@ -925,10 +976,10 @@ nav {
 
 .header-category-links .snacks {
   padding: 7px 11px;
-  border: 1px solid rgba(58, 112, 71, 0.12);
+  border: 1px solid rgba(173, 101, 57, 0.17);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.76);
-  color: #315d42;
+  background: rgba(255, 255, 255, 0.82);
+  color: #75472e;
   font-size: 0.76rem;
   font-weight: 700;
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
@@ -936,8 +987,8 @@ nav {
 
 .header-category-links .snacks:hover {
   transform: translateY(-1px);
-  border-color: rgba(58, 112, 71, 0.26);
-  background: #eaf5ec;
+  border-color: rgba(232, 122, 70, 0.38);
+  background: #fff0e3;
 }
 
 .header-category-links .snacks::after {

@@ -1,0 +1,150 @@
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+  animation: fadeAway 5.2s ease forwards;
+}
+
+.message {
+  display: flex;
+  position: absolute;
+  top: clamp(185px, 30vh, 280px);
+  left: 50%;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border: 1px solid rgba(187, 95, 42, 0.2);
+  border-radius: 999px;
+  background: linear-gradient(110deg, #fff4dc, #fffaf0 48%, #eff8e9);
+  box-shadow: 0 14px 36px rgba(100, 66, 35, 0.18);
+  color: #85451f;
+  font-size: clamp(1rem, 3vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  animation: messagePop 850ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transform: translateX(-50%);
+}
+
+.sun {
+  color: #e68a28;
+  font-size: 1.35em;
+  animation: sunGlow 1.6s ease-in-out infinite alternate;
+}
+
+.harvest {
+  color: #3e8b50;
+  font-size: 1.25em;
+}
+
+.kite {
+  position: absolute;
+  top: -70px;
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  filter: drop-shadow(0 8px 8px rgba(53, 48, 37, 0.16));
+  animation: kiteFly 4.8s cubic-bezier(0.2, 0.65, 0.3, 1) both;
+}
+
+.kiteOne {
+  left: 8%;
+  --kite-x: 32vw;
+  --kite-y: 68vh;
+  --kite-rotate: 22deg;
+}
+
+.kiteTwo {
+  left: 76%;
+  --kite-x: -26vw;
+  --kite-y: 56vh;
+  --kite-rotate: -18deg;
+  animation-delay: 180ms;
+}
+
+.kiteThree {
+  left: 44%;
+  --kite-x: 25vw;
+  --kite-y: 38vh;
+  --kite-rotate: 16deg;
+  animation-delay: 320ms;
+}
+
+.kiteFour {
+  left: 20%;
+  --kite-x: 58vw;
+  --kite-y: 78vh;
+  --kite-rotate: -24deg;
+  animation-delay: 520ms;
+}
+
+@keyframes kiteFly {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(-12deg) scale(0.65);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--kite-x), var(--kite-y), 0) rotate(var(--kite-rotate)) scale(1);
+  }
+}
+
+@keyframes messagePop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 14px) scale(0.86);
+  }
+  18%,
+  78% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.98);
+  }
+}
+
+@keyframes sunGlow {
+  to {
+    transform: rotate(35deg) scale(1.12);
+  }
+}
+
+@keyframes fadeAway {
+  0%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration,
+  .message,
+  .sun,
+  .kite {
+    animation: none;
+  }
+
+  .celebration {
+    opacity: 1;
+  }
+
+  .message {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+
+  .kite {
+    display: none;
+  }
+}

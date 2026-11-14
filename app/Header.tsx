@@ -38,6 +38,10 @@ const [specialItemsDraft, setSpecialItemsDraft] = useState<string[]>(DEFAULT_SPE
 const [isEditingSpecialItems, setIsEditingSpecialItems] = useState(false);
 const [isSavingSpecialItems, setIsSavingSpecialItems] = useState(false);
 const [specialItemsError, setSpecialItemsError] = useState('');
+const [festivalAnimationEnabled, setFestivalAnimationEnabled] = useState(false);
+const [isFestivalAnimationLoading, setIsFestivalAnimationLoading] = useState(true);
+const [isFestivalAnimationSaving, setIsFestivalAnimationSaving] = useState(false);
+const [festivalAnimationError, setFestivalAnimationError] = useState('');
 const isProductDetailsPage = PRODUCTS.some((product) => pathname === `/${product.slug}`);
 const closeProductSearch = useCallback(() => setSearchTerm(''), [setSearchTerm]);
 const visibleSpecialItems = specialItems
@@ -97,6 +101,29 @@ const visibleSpecialItems = specialItems
       .catch((error: unknown) => {
         console.error('Could not load header special items.', error);
         if (active) setSpecialItemsError(error instanceof Error ? error.message : TEXT.header.loadSpecialItemsError);
+      });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/festival-animation')
+      .then(async (response) => {
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || TEXT.header.festivalAnimationLoadError);
+        if (typeof result.enabled !== 'boolean') {
+          throw new Error(TEXT.header.festivalAnimationInvalidSetting);
+        }
+        if (active) setFestivalAnimationEnabled(result.enabled);
+      })
+      .catch((error: unknown) => {
+        console.error('Could not load the festival animation setting.', error);
+        if (active) setFestivalAnimationError(
+          error instanceof Error ? error.message : TEXT.header.festivalAnimationLoadError,
+        );
+      })
+      .finally(() => {
+        if (active) setIsFestivalAnimationLoading(false);
       });
     return () => { active = false; };
   }, []);
@@ -163,6 +190,32 @@ const visibleSpecialItems = specialItems
       setSpecialItemsError(error instanceof Error ? error.message : TEXT.header.saveSpecialItemsError);
     } finally {
       setIsSavingSpecialItems(false);
+    }
+  };
+
+  const toggleFestivalAnimation = async () => {
+    setIsFestivalAnimationSaving(true);
+    setFestivalAnimationError('');
+    try {
+      const response = await fetch('/api/festival-animation', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !festivalAnimationEnabled }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || TEXT.header.festivalAnimationUpdateError);
+      if (typeof result.enabled !== 'boolean') {
+        throw new Error(TEXT.header.festivalAnimationInvalidSetting);
+      }
+      setFestivalAnimationEnabled(result.enabled);
+      window.dispatchEvent(new CustomEvent('festival-animation-change', { detail: result.enabled }));
+    } catch (error) {
+      console.error('Could not update the festival animation setting.', error);
+      setFestivalAnimationError(
+        error instanceof Error ? error.message : TEXT.header.festivalAnimationUpdateError,
+      );
+    } finally {
+      setIsFestivalAnimationSaving(false);
     }
   };
 
@@ -272,6 +325,21 @@ const visibleSpecialItems = specialItems
             <h3>{TEXT.header.specialItemsHeading}</h3>
             {isShopkeeper && (
               <button
+                aria-pressed={festivalAnimationEnabled}
+                className={`${styles.festivalAnimationButton} ${festivalAnimationEnabled ? styles.festivalAnimationActive : ''}`}
+                disabled={isFestivalAnimationLoading || isFestivalAnimationSaving}
+                onClick={toggleFestivalAnimation}
+                type="button"
+              >
+                {isFestivalAnimationSaving
+                  ? TEXT.header.saving
+                  : festivalAnimationEnabled
+                    ? TEXT.header.festivalAnimationOn
+                    : TEXT.header.festivalAnimationOff}
+              </button>
+            )}
+            {isShopkeeper && (
+              <button
                 aria-expanded={isEditingSpecialItems}
                 className={styles.specialManageButton}
                 onClick={isEditingSpecialItems ? () => setIsEditingSpecialItems(false) : openSpecialItemsEditor}
@@ -328,6 +396,9 @@ const visibleSpecialItems = specialItems
           )}
           {!isEditingSpecialItems && specialItemsError && (
             <span className="header-error" role="alert">{specialItemsError}</span>
+          )}
+          {festivalAnimationError && (
+            <span className="header-error" role="alert">{festivalAnimationError}</span>
           )}
         </div>
       </div>

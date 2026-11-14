@@ -43,7 +43,38 @@
 .specialHeading {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.festivalAnimationButton {
+  padding: 4px 9px;
+  border: 1px solid rgba(173, 101, 57, 0.22);
+  border-radius: 999px;
+  background: #fff3e7;
+  color: #85451f;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.festivalAnimationButton:hover:not(:disabled) {
+  background: #ffe5d0;
+}
+
+.festivalAnimationActive {
+  border-color: rgba(40, 115, 72, 0.28);
+  background: #e8f4e8;
+  color: #285d3d;
+}
+
+.festivalAnimationActive:hover:not(:disabled) {
+  background: #dcefdc;
+}
+
+.festivalAnimationButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .specialManageButton {
